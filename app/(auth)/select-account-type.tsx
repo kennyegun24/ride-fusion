@@ -25,47 +25,45 @@ const SelectAccountType = () => {
   const { top } = useSafeAreaInsets();
   console.log(top);
   return (
-    <SafeAreaProvider style={{ backgroundColor: "green", flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar hidden={false} />
-        <View
-          style={{
-            flex: 1,
-            paddingHorizontal: 16,
-            // minHeight: height - top,
-            paddingTop: top,
-            backgroundColor: "red",
-          }}
-        >
-          <Header
-            header="What would you like to do?"
-            subHeader="Choose how you want to use the app today."
-          />
-          <View style={{ marginTop: 42, gap: 16 }}>
-            {options.map((e) => (
-              <AccountType
-                setAccountType={setAccountType}
-                accountType={accountType}
-                data={e}
-                key={e.id}
-              />
-            ))}
-          </View>
-          <View style={{ bottom: 100, position: "absolute", width, gap: 8 }}>
-            <TouchableOpacity style={styles.continueButton} activeOpacity={0.7}>
-              <Text style={styles.continueText}>Continue</Text>
-            </TouchableOpacity>
-            <Pressable
-              onPress={() => router.push("/(auth)/login")}
-              style={styles.haveAccountButton}
-            >
-              <Text style={styles.haveAccountText}>
-                Already have an account?
-              </Text>
-            </Pressable>
-          </View>
+    <SafeAreaProvider style={{ flex: 1 }}>
+      {/* <SafeAreaView style={{ flex: 1 }}> */}
+      <StatusBar hidden={false} />
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: 16,
+          // minHeight: height - top,
+          paddingTop: top,
+          // backgroundColor: "red",
+        }}
+      >
+        <Header
+          header="What would you like to do?"
+          subHeader="Choose how you want to use the app today."
+        />
+        <View style={{ marginTop: 42, gap: 16 }}>
+          {options.map((e) => (
+            <AccountType
+              setAccountType={setAccountType}
+              accountType={accountType}
+              data={e}
+              key={e.id}
+            />
+          ))}
         </View>
-      </SafeAreaView>
+        <View style={{ bottom: 100, position: "absolute", width, gap: 8 }}>
+          <TouchableOpacity style={styles.continueButton} activeOpacity={0.7}>
+            <Text style={styles.continueText}>Continue</Text>
+          </TouchableOpacity>
+          <Pressable
+            onPress={() => router.push("/(auth)/login")}
+            style={styles.haveAccountButton}
+          >
+            <Text style={styles.haveAccountText}>Already have an account?</Text>
+          </Pressable>
+        </View>
+      </View>
+      {/* </SafeAreaView> */}
     </SafeAreaProvider>
   );
 };
