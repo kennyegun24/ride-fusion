@@ -78,7 +78,7 @@ const CircleButton: FC<CircleButtonProps> = ({
             >
               <View style={styles.button}>
                 <Animated.Image
-                  source={right_arrow}
+                  source={require("@/assets/images/right-arrow.png")}
                   style={[styles.image, imageAnimationStyle]}
                 />
                 {/* <Animated.View style={[styles.ripple]} /> */}

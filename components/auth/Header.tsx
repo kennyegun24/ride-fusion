@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = ({ header, subHeader }) => {
   return (
-    <View>
+    <View style={{ paddingBottom: 12 }}>
       <TouchableWithoutFeedback
         style={styles.touchable}
         onPress={() => router.back()}

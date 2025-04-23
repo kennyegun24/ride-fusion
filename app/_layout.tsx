@@ -4,16 +4,16 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Platform, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ActivityIndicator, View } from "react-native";
+import { RoleProvider } from "@/providers/RoleProvider";
+import { AuthProvider, useAuthenticate } from "@/providers/AuthProvider";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -31,22 +31,23 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
+    SplashScreen.preventAutoHideAsync();
     console.log("first");
     return null;
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <RoleProvider>
+      <AuthProvider>
         <View style={{ flex: 1 }}>
           <Stack
             screenOptions={{
-              // animation: "slide_from_left",
               gestureEnabled: true,
             }}
+            initialRouteName="index"
           >
             <Stack.Screen
-              name="(onboarding)"
+              name="index"
               options={{
                 headerShown: false,
               }}
@@ -55,11 +56,19 @@ export default function RootLayout() {
               name="(auth)"
               options={{ headerShown: false, animation: "slide_from_left" }}
             />
+            <Stack.Screen name="(protected)" options={{ headerShown: false }} />
+            {/* <Stack.Screen name="(cars)" options={{ headerShown: false }} />
+            <Stack.Screen name="(chats)" options={{ headerShown: false }} />
+            <Stack.Screen name="(profile)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(userProfile)"
+              options={{ headerShown: false }}
+            /> */}
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} hidden />
+          <StatusBar style={"auto"} hidden />
         </View>
-      </ThemeProvider>
-    </GestureHandlerRootView>
+      </AuthProvider>
+    </RoleProvider>
   );
 }

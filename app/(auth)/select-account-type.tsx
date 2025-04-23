@@ -14,33 +14,57 @@ import { AccountType } from "@/components/auth/AccountType";
 import { router } from "expo-router";
 import {
   SafeAreaProvider,
-  SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { Snackbar } from "react-native-paper";
 
-const { height, width } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const SelectAccountType = () => {
   const [accountType, setAccountType] = useState<string>("");
+  const [visible, setVisible] = useState<boolean>(false);
   const { top } = useSafeAreaInsets();
-  console.log(top);
+  const navigateToSignup = (e: string) => {
+    if (e === "driver") {
+      router.navigate("/(auth)/signup-driver");
+    } else if (e === "owner") {
+      router.navigate("/(auth)/signup-owner");
+    } else {
+      setVisible(true);
+    }
+  };
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
-      {/* <SafeAreaView style={{ flex: 1 }}> */}
       <StatusBar hidden={false} />
       <View
-        style={{
-          flex: 1,
-          paddingHorizontal: 16,
-          // minHeight: height - top,
-          paddingTop: top,
-          // backgroundColor: "red",
-        }}
+        style={[
+          styles.container,
+          { paddingTop: top + 12, position: "relative" },
+        ]}
       >
-        <Header
+        <Snackbar
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          duration={2000}
+          style={{
+            position: "absolute",
+            bottom: 30,
+            zIndex: 9999,
+            left: 0,
+            width: width - 16,
+            backgroundColor: "red",
+          }}
+        >
+          Select either option
+        </Snackbar>
+        {/* <Header
           header="What would you like to do?"
           subHeader="Choose how you want to use the app today."
-        />
+        /> */}
+        <Text style={styles.headerText}>What would you like to do?</Text>
+        <Text style={styles.subHeaderText}>
+          Choose how you want to use the app today.
+        </Text>
         <View style={{ marginTop: 42, gap: 16 }}>
           {options.map((e) => (
             <AccountType
@@ -51,8 +75,17 @@ const SelectAccountType = () => {
             />
           ))}
         </View>
-        <View style={{ bottom: 100, position: "absolute", width, gap: 8 }}>
-          <TouchableOpacity style={styles.continueButton} activeOpacity={0.7}>
+        <View style={styles.btnContainer}>
+          <TouchableOpacity
+            onPress={() => navigateToSignup(accountType)}
+            style={[
+              styles.continueButton,
+              {
+                backgroundColor: accountType.trim() !== "" ? "#269355" : "gray",
+              },
+            ]}
+            activeOpacity={0.7}
+          >
             <Text style={styles.continueText}>Continue</Text>
           </TouchableOpacity>
           <Pressable
@@ -63,7 +96,6 @@ const SelectAccountType = () => {
           </Pressable>
         </View>
       </View>
-      {/* </SafeAreaView> */}
     </SafeAreaProvider>
   );
 };
@@ -71,12 +103,25 @@ const SelectAccountType = () => {
 export default SelectAccountType;
 
 const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 24,
+    fontWeight: 600,
+    marginTop: 16,
+    marginBottom: 6,
+    color: "#414141",
+  },
+  subHeaderText: { fontSize: 16, color: "#7F7F7F" },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
   icon: {
     backgroundColor: "#26935517",
     height: "auto",
     padding: 8,
     borderRadius: 50,
   },
+  btnContainer: { bottom: 100, position: "absolute", width, gap: 8 },
   continueButton: {
     backgroundColor: "#269355",
     borderRadius: 50,
