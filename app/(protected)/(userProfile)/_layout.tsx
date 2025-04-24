@@ -22,6 +22,7 @@ export default function RootLayout() {
         options={{
           headerShown: false,
           headerStyle: { backgroundColor: "#fff" },
+          animation: "slide_from_right",
           headerLeft: () => (
             <EvilIcons
               name="chevron-left"
@@ -36,6 +37,7 @@ export default function RootLayout() {
         options={{
           headerShadowVisible: false,
           headerStyle: { backgroundColor: "#fff" },
+          animation: "slide_from_right",
           headerLeft: () => (
             <Pressable
               style={{
@@ -58,6 +60,7 @@ export default function RootLayout() {
         options={{
           headerShadowVisible: false,
           headerStyle: { backgroundColor: "#fff" },
+          animation: "slide_from_right",
           headerLeft: () => (
             <Pressable
               style={{

@@ -13,6 +13,10 @@
       "icon": {
         "dark": "./assets/images/icons/ios-icon.png",
         "light": "./assets/images/icons/ios-icon.png"
+      },
+      "bundleIdentifier": "com.jaamanu.ridefusion",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -22,7 +26,8 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.jaamanu.ridefusion"
     },
     "web": {
       "bundler": "metro",

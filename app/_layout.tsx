@@ -32,7 +32,6 @@ export default function RootLayout() {
 
   if (!loaded) {
     SplashScreen.preventAutoHideAsync();
-    console.log("first");
     return null;
   }
 
@@ -50,6 +49,7 @@ export default function RootLayout() {
               name="index"
               options={{
                 headerShown: false,
+                animation: "slide_from_right",
               }}
             />
             <Stack.Screen

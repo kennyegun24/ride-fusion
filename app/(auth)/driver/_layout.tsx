@@ -30,6 +30,7 @@ export default function RootLayout() {
           options={{
             headerStyle: { backgroundColor: "#fff" },
             headerShadowVisible: false,
+            animation: "slide_from_right",
             headerLeft: () => (
               <Text style={{ fontWeight: 500, fontSize: 16 }}>
                 Verify Account
@@ -42,6 +43,7 @@ export default function RootLayout() {
           options={{
             headerStyle: { backgroundColor: "#fff" },
             headerShadowVisible: false,
+            animation: "slide_from_right",
             headerLeft: () => (
               <Pressable
                 style={{
@@ -62,6 +64,7 @@ export default function RootLayout() {
           options={{
             headerStyle: { backgroundColor: "#fff" },
             headerShadowVisible: false,
+            animation: "slide_from_right",
             headerLeft: () => (
               <Pressable
                 style={{
@@ -82,6 +85,7 @@ export default function RootLayout() {
           options={{
             headerStyle: { backgroundColor: "#fff" },
             headerShadowVisible: false,
+            animation: "slide_from_right",
             headerLeft: () => (
               <Pressable
                 style={{

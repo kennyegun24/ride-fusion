@@ -23,7 +23,7 @@ import { driverCredentials } from "@/utils/driverCredentials";
 import ValidateSelect from "@/components/forms/ValidateSelect";
 import { useAuthenticate } from "@/providers/AuthProvider";
 // import {OverScroll} from "@timotismjntk/react-native-overscroll-fix";
-import { OverScrollView } from "react-native-overscroll";
+// import { OverScrollView } from "react-native-overscroll";
 type DriverFormValues = z.infer<typeof driverSchema>;
 
 const signupDriver = () => {
@@ -66,42 +66,42 @@ const signupDriver = () => {
           subHeader="Book cars near you anytime, anywhere. Let's get you moving"
         />
         {showModal && <AccountCreated />}
-        <OverScrollView
+        {/* <OverScrollView
           style={styles.container}
           contentContainerStyle={styles.content}
           alwaysBounceVertical
+        > */}
+        <ScrollView
+          overScrollMode="always"
+          style={{ paddingVertical: 24 }}
+          showsVerticalScrollIndicator={false}
         >
-          <ScrollView
-            overScrollMode="always"
-            style={{ paddingVertical: 24 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={{ gap: 12 }}>
-              {driverCredentials.map((e) => (
-                <View key={e.key}>
-                  {!e.options ? (
-                    <ValidateInput
-                      label={e.label}
-                      name={e.key}
-                      placeholder={e.placeholder}
-                      control={control}
-                      secureTextEntry={e.key === "password"}
-                    />
-                  ) : (
-                    <ValidateSelect
-                      placeholder={e?.placeholder}
-                      data={e.options}
-                      value={value}
-                      control={control}
-                      name={e.key}
-                      label={e.label}
-                    />
-                  )}
-                </View>
-              ))}
-            </View>
-          </ScrollView>
-        </OverScrollView>
+          <View style={{ gap: 12 }}>
+            {driverCredentials.map((e) => (
+              <View key={e.key}>
+                {!e.options ? (
+                  <ValidateInput
+                    label={e.label}
+                    name={e.key}
+                    placeholder={e.placeholder}
+                    control={control}
+                    secureTextEntry={e.key === "password"}
+                  />
+                ) : (
+                  <ValidateSelect
+                    placeholder={e?.placeholder}
+                    data={e.options}
+                    value={value}
+                    control={control}
+                    name={e.key}
+                    label={e.label}
+                  />
+                )}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+        {/* </OverScrollView> */}
         <View style={styles.btnContainer}>
           <Pressable onPress={register} style={styles.authButton}>
             <Text style={styles.authText}>Create Account</Text>

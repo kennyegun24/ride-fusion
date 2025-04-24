@@ -15,7 +15,12 @@ export default function RootLayout() {
       }}
       // initialRouteName="index"
     >
-      <Stack.Screen name="index" options={{}} />
+      <Stack.Screen
+        name="index"
+        options={{
+          animation: "slide_from_right",
+        }}
+      />
     </Stack>
   );
 }

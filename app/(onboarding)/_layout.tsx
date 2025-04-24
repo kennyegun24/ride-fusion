@@ -15,7 +15,10 @@ export default function RootLayout() {
       }}
       initialRouteName="index"
     >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="index"
+        options={{ headerShown: false, animation: "slide_from_right" }}
+      />
       {/* <StatusBar hidden /> */}
       {/* <Stack.Screen name="details" /> */}
     </Stack>

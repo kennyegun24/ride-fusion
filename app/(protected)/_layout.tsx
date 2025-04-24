@@ -29,11 +29,26 @@ export default function RootLayout() {
           gestureEnabled: true,
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(cars)" options={{ headerShown: false }} />
-        <Stack.Screen name="(chats)" options={{ headerShown: false }} />
-        <Stack.Screen name="(profile)" options={{ headerShown: false }} />
-        <Stack.Screen name="(userProfile)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false, animation: "slide_from_right" }}
+        />
+        <Stack.Screen
+          name="(cars)"
+          options={{ headerShown: false, animation: "slide_from_right" }}
+        />
+        <Stack.Screen
+          name="(chats)"
+          options={{ headerShown: false, animation: "slide_from_right" }}
+        />
+        <Stack.Screen
+          name="(profile)"
+          options={{ headerShown: false, animation: "slide_from_right" }}
+        />
+        <Stack.Screen
+          name="(userProfile)"
+          options={{ headerShown: false, animation: "slide_from_right" }}
+        />
       </Stack>
       <StatusBar style={"auto"} hidden />
     </View>
