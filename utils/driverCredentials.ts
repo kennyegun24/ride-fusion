@@ -30,37 +30,49 @@ export const driverCredentials = [
     required: true,
   },
   {
-    key: "driversLicense",
-    label: "Driver's License",
+    key: "driversLicenseType",
+    label: "Driver's License Type",
     options: [
-      { label: "SA", value: "south-africe" },
-      { label: "Foreign", value: "foreign" },
+      { label: "SA", value: "South-Africa" },
+      { label: "Foreign", value: "Foreign" },
     ],
     placeholder: "Select your license type",
     required: true,
   },
   {
-    key: "basicDetails",
-    label: "Basic Details (Name, Address, etc.)",
+    key: "address",
+    label: "Address",
     placeholder: "Enter your residential address",
     required: true,
   },
-  {
-    key: "proofOfAddress",
-    label: "Proof of Address",
-    placeholder: "Upload a utility bill or bank statement",
-    required: true,
-  },
-  {
-    key: "faceCaptureVerification",
-    label: "Face Capture & License Comparison",
-    placeholder: "Take a selfie for identity verification",
-    required: true,
-  },
+  // {
+  //   key: "proofOfAddress",
+  //   label: "Proof of Address",
+  //   placeholder: "Upload a utility bill or bank statement",
+  //   required: true,
+  // },
+  // {
+  //   key: "faceCaptureVerification",
+  //   label: "Face Capture & License Comparison",
+  //   placeholder: "Take a selfie for identity verification",
+  //   required: true,
+  // },
   {
     key: "validPlatformAccounts",
-    label: "Screenshots of Bolt/Uber/Indrive (or Not Registered)",
-    placeholder: "Upload relevant screenshots or select 'Not Registered'",
+    label:
+      "Names of registered driving platforms Bolt/Uber/Indrive (or Not Registered)",
+
+    options: [
+      { label: "Bolt X Uber", value: "Bolt and Uber" },
+      { label: "Bolt X Indrive", value: "Bolt and Indrive" },
+      { label: "Uber X Indrive", value: "Uber and Indrive" },
+      { label: "Bolt X Uber X Indrive", value: "Bolt, Uber and Indrive" }, // 🔥 all three
+      { label: "Bolt Only", value: "Bolt" },
+      { label: "Uber Only", value: "Uber" },
+      { label: "Indrive Only", value: "Indrive" },
+      { label: "None", value: "None" },
+    ],
+    placeholder: "Select your registered platform",
     required: true,
   },
   {
