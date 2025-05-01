@@ -1,35 +1,41 @@
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { AntDesign, Octicons } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
 import Pager from "@/components/home/details/Pager";
-import DynamicStarRating from "@/components/Stars";
-import { cars } from "@/utils/cars";
 import Review from "@/components/home/details/Review";
 import CaFeatures from "@/components/home/details/CaFeatures";
+import { StatusBar } from "expo-status-bar";
+import useCarDetails from "@/hooks/useFetchCarDetails";
+import CarDetailsLoader from "@/components/global/CarDetailsLoader";
+import NoReview from "@/components/NoReview";
+import AdditionalFields, {
+  BottomView,
+  OwnerDetails,
+} from "@/components/home/details/AdditionalFields";
+import useAuth from "@/hooks/userAuth";
 
 const CarDetail = () => {
   const { id } = useLocalSearchParams();
-  const findCar = cars.find((e) => e.car_name === id);
+  const { carDetails, loading } = useCarDetails(id as string);
+  const { user } = useAuth();
+  if (loading) return <CarDetailsLoader />;
+  const car = carDetails.car;
+  const reviews = carDetails.reviews;
+  const carOwner = carDetails?.car?.user;
   return (
     <View style={{ flex: 1 }}>
+      <StatusBar style="auto" hidden={false} />
       <ParallaxScrollView
         bottom={0}
         headerBackgroundColor={{ light: "#fff", dark: "#1D3D47" }}
-        headerImage={<Pager image={findCar?.car_image ?? []} />}
+        headerImage={<Pager image={car.images ?? []} />}
       >
         <View style={{ paddingTop: 12 }}>
           <View style={styles.topContainer}>
             <Text style={styles.carName}>
-              {id} {findCar?.car_year}
+              {car.car_name} {car.model}
             </Text>
             <Text style={styles.btnText}>Available Now</Text>
           </View>
@@ -37,35 +43,34 @@ const CarDetail = () => {
             <Octicons name="location" size={16} color="#8B8B8B" />
             <Text style={styles.locationText}>Ikeja, Lagos</Text>
           </View>
-          <Text style={styles.descText}>{findCar?.description}</Text>
-          <CaFeatures details={findCar?.details || []} />
-          <View style={styles.ownerImgContainer}>
-            <Image source={findCar?.owner_image} style={styles.ownerImg} />
-            <View>
-              <Text style={styles.ownerName}>{findCar?.owner_name}</Text>
-              <View style={styles.ratingContainer}>
-                <Text style={styles.ratingNumber}>{findCar?.rating}</Text>
-                <DynamicStarRating rating={findCar?.rating || 0} size={16} />
-                <Text style={styles.ratingNumber}>
-                  {findCar?.all_reviews?.length} Reviews
-                </Text>
-              </View>
-            </View>
-          </View>
+
+          <AdditionalFields
+            brand={car.brand}
+            model={car.model}
+            rentalTerms={car.rentalTerms}
+          />
+          <Text style={styles.descText}>{car.description}</Text>
+          <CaFeatures details={car.features || {}} />
+          <OwnerDetails
+            downloadURL={carOwner.downloadURL}
+            fullName={carOwner.fullName}
+            rating={car.rating}
+            reviewsLength={reviews?.length}
+          />
           <View style={styles.usersRatingsContainer}>
-            {findCar?.all_reviews?.map((e, _) => (
-              <Review key={_} data={e} />
-            ))}
+            {reviews?.length <= 0 ? (
+              <NoReview />
+            ) : (
+              reviews?.map((e, _) => <Review key={_} data={e} />)
+            )}
           </View>
         </View>
       </ParallaxScrollView>
-      <View style={styles.bottomButtonsContainer}>
-        <Text style={{ fontSize: 24 }}>${findCar?.rent_amount}</Text>
-        <Pressable style={styles.messageRender}>
-          <AntDesign name="message1" size={16} color="#fff" />
-          <Text style={styles.messageRenderText}>Message Render</Text>
-        </Pressable>
-      </View>
+      <BottomView
+        showChat={user?.uid !== carOwner.uid}
+        userId={carOwner._id}
+        rentalPricePerDay={car.rentalPricePerDay}
+      />
     </View>
   );
 };
@@ -78,8 +83,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  carName: { fontSize: 24, fontWeight: 600, color: "#414141" },
+  carName: { fontSize: 18, fontWeight: 600, color: "#414141" },
   btnText: {
+    fontSize: 13,
     color: "#269355",
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -94,8 +100,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 12,
   },
-  locationText: { color: "#8B8B8B", fontSize: 16 },
-  descText: { color: "#8B8B8B", fontSize: 17, lineHeight: 26 },
+  locationText: { color: "#8B8B8B", fontSize: 14 },
+  descText: { color: "#8B8B8B", fontSize: 14, lineHeight: 24 },
   myStarStyle: {
     color: "yellow",
     backgroundColor: "transparent",
@@ -106,36 +112,9 @@ const styles = StyleSheet.create({
   myEmptyStarStyle: {
     color: "white",
   },
-  ownerImgContainer: {
-    flexDirection: "row",
-    gap: 6,
-    alignItems: "center",
-    marginTop: 12,
-    marginBottom: 14,
-  },
-  ownerImg: { width: 40, height: 40, borderRadius: 50 },
-  ownerName: { fontWeight: 600, fontSize: 18, color: "#414141" },
-  ratingContainer: { flexDirection: "row", gap: 4 },
-  ratingNumber: { color: "#6D6D6D", fontSize: 16 },
+
   usersRatingsContainer: {
     marginVertical: 16,
     gap: 16,
   },
-  bottomButtonsContainer: {
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  messageRender: {
-    padding: 12,
-    backgroundColor: "#269355",
-    borderRadius: 50,
-    flexDirection: "row",
-    gap: 4,
-    alignItems: "center",
-  },
-  messageRenderText: { fontSize: 18, color: "#fff" },
 });

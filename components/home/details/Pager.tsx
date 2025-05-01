@@ -18,7 +18,7 @@ type PageSelectedEvent = {
 };
 
 interface PagerProps {
-  image: ImageSourcePropType[];
+  image: string[];
 }
 
 const Pager: FC<PagerProps> = ({ image }) => {
@@ -37,7 +37,7 @@ const Pager: FC<PagerProps> = ({ image }) => {
       >
         {image.map((e, _) => (
           <View style={styles.page} key={_} collapsable={false}>
-            <Image style={styles.image} source={e} />
+            <Image style={styles.image} source={{ uri: e }} />
           </View>
         ))}
       </PagerView>

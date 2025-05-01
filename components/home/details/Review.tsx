@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 8,
   },
-  userRatingName: { fontSize: 18, color: "#242425", marginBottom: 6 },
+  userRatingName: { fontSize: 15, color: "#242425", marginBottom: 6 },
   userRatingViewContainer: { flexDirection: "row", gap: 2 },
-  ratingDate: { fontSize: 14, color: "#8B8B8B" },
-  ratingDesc: { marginTop: 12, color: "#8b8b8b", fontSize: 16, lineHeight: 24 },
+  ratingDate: { fontSize: 13, color: "#8B8B8B" },
+  ratingDesc: { marginTop: 12, color: "#8b8b8b", fontSize: 14, lineHeight: 22 },
 });
