@@ -12,7 +12,12 @@ const NewlyListedCard: FC<CarProps> = ({ data }) => {
       <Text style={styles.title}>Newly Listed Cars</Text>
       <View style={styles.mapContainer}>
         {data.map((e, _) => (
-          <Car key={_} {...e} />
+          <Car
+            key={_}
+            {...e}
+            downloadURL={e.user?.downloadURL}
+            fullName={e.user?.fullName}
+          />
         ))}
       </View>
     </View>
@@ -23,7 +28,7 @@ export default NewlyListedCard;
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: 500,
     marginTop: 12,
     marginBottom: 16,

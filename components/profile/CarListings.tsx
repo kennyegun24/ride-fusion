@@ -51,7 +51,7 @@ const CarListings = () => {
 export default CarListings;
 
 const styles = StyleSheet.create({
-  overviewHeader: { fontSize: 20, fontWeight: 600 },
+  overviewHeader: { fontSize: 17, fontWeight: 600 },
   scroll: { flexDirection: "row", gap: 12 },
   carList: {
     borderRadius: 12,
@@ -64,5 +64,5 @@ const styles = StyleSheet.create({
   carImage: { width: 150, height: 90 },
   nameContainer: { paddingHorizontal: 8, paddingVertical: 12 },
   carName: { color: "#8B8B8B", fontSize: 15 },
-  price: { color: "#269355", fontSize: 17, fontWeight: 600, marginTop: 6 },
+  price: { color: "#269355", fontSize: 15, fontWeight: 600, marginTop: 6 },
 });

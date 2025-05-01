@@ -11,32 +11,36 @@ import { CarObjProps } from "@/types/carTypes";
 import { router } from "expo-router";
 
 const Car: FC<CarObjProps> = ({
-  car_image,
+  images,
   car_name,
-  car_year,
-  owner_image,
-  owner_name,
-  rent_amount,
+  model,
+  downloadURL: owner_image,
+  fullName: owner_name,
+  rentalPricePerDay,
+  available,
+  _id,
 }) => {
   return (
     <Pressable
       style={styles.container}
-      onPress={() => router.navigate(`/(protected)/(cars)/${car_name}`)}
+      onPress={() => [router.navigate(`/(protected)/(cars)/${_id}`)]}
     >
-      <Image source={car_image[0]} style={styles.carImg} />
+      <Image source={{ uri: images[0] }} style={styles.carImg} />
       <View style={styles.subContainer}>
         <View>
           <Text style={styles.carName}>
-            {car_name} {car_year}
+            {car_name} {model}
           </Text>
-          <Text style={styles.status}>Available Now</Text>
+          <Text style={styles.status}>
+            {available ? "Available Now" : "Unavailable"}
+          </Text>
         </View>
-        <Text style={styles.amount}>${rent_amount}</Text>
+        <Text style={styles.amount}>${rentalPricePerDay}/day</Text>
       </View>
 
       <View style={styles.cardDetails}>
         <View style={styles.ownerDetails}>
-          <Image source={owner_image} style={styles.img} />
+          <Image source={{ uri: owner_image }} style={styles.img} />
           <Text style={styles.name}>{owner_name}</Text>
         </View>
         <Pressable
@@ -60,37 +64,38 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E9E9E9",
   },
-  carImg: { height: 200, width: "100%", resizeMode: "cover" },
+  carImg: { height: 180, width: "100%", resizeMode: "cover" },
   subContainer: {
     flexDirection: "row",
     paddingVertical: 12,
     paddingHorizontal: 18,
     justifyContent: "space-between",
   },
-  carName: { fontSize: 22, color: "#414141", fontWeight: 600 },
-  status: { fontSize: 17, marginTop: 2, color: "#8B8B8B" },
-  amount: { fontSize: 18, color: "#414141" },
+  carName: { fontSize: 16, color: "#414141", fontWeight: 600 },
+  status: { fontSize: 14, marginTop: 2, color: "#8B8B8B" },
+  amount: { fontSize: 16, color: "#414141" },
   cardDetails: {
     padding: 18,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   ownerDetails: { flexDirection: "row", gap: 6, alignItems: "center" },
   img: { height: 35, width: 35, borderRadius: 50 },
   name: {
-    fontSize: Platform.OS === "android" ? 18 : 19,
+    fontSize: 16,
     fontWeight: Platform.OS === "android" ? 400 : 500,
   },
   btn: {
-    padding: 8,
-    paddingHorizontal: 18,
+    padding: 6,
+    paddingHorizontal: 14,
     minWidth: 80,
     borderRadius: 50,
     backgroundColor: "#269355",
   },
   btnText: {
     textAlign: "center",
-    fontSize: 18,
+    fontSize: 14,
     color: "#fff",
   },
 });

@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     textAlign: "center",
-    fontSize: 18,
+    fontSize: 13,
     color: "#fff",
   },
 });

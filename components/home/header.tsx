@@ -1,18 +1,27 @@
 import { Image, Platform, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { EvilIcons } from "@expo/vector-icons";
+import useAuth from "@/hooks/userAuth";
+import useNotifications from "@/hooks/useNotifications";
 
 const Header = () => {
+  const { user } = useAuth();
+  const { notifications } = useNotifications();
+
   return (
     <View style={styles.container}>
       <View style={styles.flexGapRow}>
         <Image
-          source={require("@/assets/images/male.jpeg")}
+          source={
+            user?.photoURL
+              ? { uri: user?.photoURL }
+              : require("@/assets/images/no_image.png")
+          }
           style={styles.img}
         />
         <View style={{}}>
           <Text style={styles.header}>Welcome back</Text>
-          <Text style={styles.name}>Kenny Elias</Text>
+          <Text style={styles.name}>{user?.displayName}</Text>
         </View>
       </View>
       <View style={styles.flexGapRow}>
@@ -31,6 +40,24 @@ const Header = () => {
             size={32}
             color="#269355"
           />
+          <Text
+            style={{
+              position: "absolute",
+              right: -5,
+              top: -5,
+              backgroundColor: "#269355",
+              padding: 4,
+              height: 20,
+              width: 20,
+              fontSize: 12,
+              textAlign: "center",
+              color: "#fff",
+              fontWeight: 700,
+              borderRadius: 50,
+            }}
+          >
+            {notifications.length}
+          </Text>
         </View>
       </View>
     </View>
@@ -50,8 +77,8 @@ const styles = StyleSheet.create({
   img: { height: 50, width: 50, borderRadius: 50 },
   header: { fontSize: 14, color: "#8B8B8B", fontWeight: 300 },
   name: {
-    fontSize: Platform.OS === "android" ? 18 : 21,
-    fontWeight: Platform.OS === "android" ? 400 : 500,
+    fontSize: 17,
+    fontWeight: 500,
   },
   iconContainer: {
     // elevation: 2,

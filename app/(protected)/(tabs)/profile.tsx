@@ -3,10 +3,16 @@ import React, { useState } from "react";
 import { HeaderImage } from "@/components/profile/ProfileHeadet";
 import ProfileOptions from "@/components/userProfile/ProfileOptions";
 import AccountActionsModal from "@/components/userProfile/BlurModal";
+import { getAuth } from "firebase/auth";
+import { useRegistrationState } from "@/hooks/useRegisterationState";
 
 const profile = () => {
   const [action, setAction] = useState<string>("");
   const hideModal = () => setAction("");
+  const signOut = async () => {
+    await getAuth().signOut();
+    useRegistrationState.getState().setRegistrationComplete(false);
+  };
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       <ScrollView>
@@ -16,7 +22,11 @@ const profile = () => {
         </View>
       </ScrollView>
       {action.trim() !== "" && (
-        <AccountActionsModal action={action} closeModal={hideModal} />
+        <AccountActionsModal
+          signOut={signOut}
+          action={action}
+          closeModal={hideModal}
+        />
       )}
     </SafeAreaView>
   );

@@ -53,7 +53,12 @@ const ValidateSelect = ({
               {label}
             </Text>
             <Dropdown
-              style={[styles.dropdown]}
+              style={[
+                styles.dropdown,
+                {
+                  ...errorField,
+                },
+              ]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}

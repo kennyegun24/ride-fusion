@@ -36,10 +36,10 @@ export const AccountType: FC<accountTypeProps> = ({
       >
         {data.icon}
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 20, fontWeight: 600, color: "#414141" }}>
+          <Text style={{ fontSize: 17, fontWeight: 600, color: "#414141" }}>
             {data.title}
           </Text>
-          <Text style={{ fontSize: 16, color: "#7F7F7F", marginTop: 4 }}>
+          <Text style={{ fontSize: 14, color: "#7F7F7F", marginTop: 4 }}>
             {data.desc}
           </Text>
         </View>

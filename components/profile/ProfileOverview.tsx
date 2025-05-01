@@ -36,7 +36,7 @@ const ProfileOverview = () => {
 export default ProfileOverview;
 
 const styles = StyleSheet.create({
-  overviewHeader: { fontSize: 20, fontWeight: 600 },
+  overviewHeader: { fontSize: 17, fontWeight: 600 },
   overviewRatingTextContainer: { flexDirection: "row", gap: 3, marginTop: 12 },
   overviewTextView: {
     marginTop: 8,

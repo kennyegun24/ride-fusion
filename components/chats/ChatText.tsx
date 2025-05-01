@@ -1,23 +1,16 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { FC, useMemo } from "react";
 import { chatTime } from "@/helper/chat_time";
+import { messages } from "@/types/messageTypes";
 
-interface ConversationProps {
-  data: {
-    senderId: string;
-    receiverId: string;
-    message: string;
-    timeSent: Date;
-  };
-}
-const ChatText: FC<ConversationProps> = ({ data }) => {
-  const isReceiver = data.receiverId === "user1";
+const ChatText: FC<messages> = ({ date, senderId, text, myId }) => {
+  const isReceiver = senderId === myId;
   const style = useMemo(() => styles(isReceiver), [isReceiver]);
   return (
     <View style={style.container}>
-      <View style={{ width: "75%" }}>
-        <Text style={style.textMessage}>{data.message}</Text>
-        <Text style={style.timeStamp}>{chatTime(data.timeSent)}</Text>
+      <View style={{ maxWidth: "75%" }}>
+        <Text style={style.textMessage}>{text}</Text>
+        <Text style={style.timeStamp}>{chatTime(date)}</Text>
       </View>
     </View>
   );
@@ -29,11 +22,11 @@ const styles = (isReceiver: boolean) => {
   return StyleSheet.create({
     container: { flexDirection: isReceiver ? "row-reverse" : "row" },
     textMessage: {
-      fontSize: 14,
+      fontSize: 13,
       maxWidth: "100%",
       backgroundColor: isReceiver ? "#269355" : "#171C220D",
       color: isReceiver ? "#fff" : "#454545",
-      padding: 12,
+      padding: 10,
       // borderStartStartRadius: 12,
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12,

@@ -14,9 +14,10 @@ const { height, width } = Dimensions.get("screen");
 interface props {
   action: string;
   closeModal: () => void;
+  signOut: () => void;
 }
 
-const AccountActionsModal = ({ action, closeModal }: props) => {
+const AccountActionsModal = ({ action, closeModal, signOut }: props) => {
   return (
     <BlurModal closeModal={closeModal}>
       {action === "signOut" ? (
@@ -30,7 +31,7 @@ const AccountActionsModal = ({ action, closeModal }: props) => {
             >
               <Text style={[styles.authText, styles.textGreen]}>Cancel</Text>
             </Pressable>
-            <Pressable style={[styles.authButton]}>
+            <Pressable onPress={signOut} style={[styles.authButton]}>
               <Text style={styles.authText}>Log Out</Text>
             </Pressable>
           </View>
@@ -65,7 +66,7 @@ export default AccountActionsModal;
 const styles = StyleSheet.create({
   titleText: {
     color: "#414141",
-    fontSize: 24,
+    fontSize: 20,
     textAlign: "center",
     marginBottom: 4,
   },
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     borderColor: "#FF0000",
     borderWidth: 1,
   },
-  authText: { textAlign: "center", color: "#fff", fontSize: 18 },
+  authText: { textAlign: "center", color: "#fff", fontSize: 14 },
   textGreen: { color: "#FF0000" },
   btnContainer: {
     flexDirection: "row",

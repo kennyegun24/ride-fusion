@@ -14,7 +14,7 @@ type inputProps = {
   name: string;
   placeholder: string;
 } & TextInputProps;
-const ValidateInput = ({
+const ValidateITextArea = ({
   label,
   name,
   placeholder,
@@ -45,6 +45,8 @@ const ValidateInput = ({
               {label}
             </Text>
             <ReactNativeTextInput
+              multiline={true}
+              numberOfLines={4}
               placeholderTextColor={"#8B8B8B"}
               placeholder={placeholder}
               value={value}
@@ -61,17 +63,24 @@ const ValidateInput = ({
   );
 };
 
-export default ValidateInput;
+export default ValidateITextArea;
 
 const styles = StyleSheet.create({
   textInput: {
     paddingHorizontal: 12,
-    paddingVertical: 16,
+    paddingVertical: 12,
     borderColor: "#E9E9E9",
     borderWidth: 1,
     borderRadius: 8,
     marginTop: 6,
     backgroundColor: "#171C2208",
+
+    height: 120, // adjust height
+    textAlignVertical: "top", // aligns text to the top
+    // borderColor: "#ccc",
+    // borderWidth: 1,
+    // borderRadius: 8,
+    padding: 10,
   },
   scroll: { paddingVertical: 24 },
   labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 16 },

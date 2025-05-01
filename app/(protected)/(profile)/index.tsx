@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 16,
   },
-  reviewTitle: { fontSize: 20, fontWeight: 600 },
+  reviewTitle: { fontSize: 17, fontWeight: 600 },
   buttonContainer: {
     flexDirection: "row",
     padding: 12,

@@ -17,11 +17,16 @@ interface BlurModalChildProps {
   children: ReactNode;
   // action: string;
   closeModal?: () => void;
+  background?: boolean;
 }
 
 interface props {}
 
-const BlurModal = ({ children, closeModal }: BlurModalChildProps) => {
+const BlurModal = ({
+  children,
+  closeModal,
+  background = true,
+}: BlurModalChildProps) => {
   const { top } = useSafeAreaInsets();
   return (
     <TouchableWithoutFeedback onPress={closeModal}>
@@ -29,10 +34,19 @@ const BlurModal = ({ children, closeModal }: BlurModalChildProps) => {
         experimentalBlurMethod="dimezisBlurView"
         tint="dark"
         intensity={5}
-        style={[styles.container, { marginTop: -top }]}
+        style={[
+          styles.container,
+          // { marginTop: -top }
+        ]}
       >
         {/* Prevent touch events from bubbling through the modal content */}
-        <Pressable style={styles.contentContainer} onPress={() => {}}>
+        <Pressable
+          style={[
+            styles.contentContainer,
+            { backgroundColor: background ? "#fff" : "" },
+          ]}
+          onPress={() => {}}
+        >
           {children}
         </Pressable>
       </BlurView>

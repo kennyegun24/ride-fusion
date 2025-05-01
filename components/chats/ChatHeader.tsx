@@ -1,14 +1,15 @@
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export const HeaderImage = () => {
+export const HeaderImage = (params: any) => {
+  // const params = useLocalSearchParams();
   return (
     <View style={{ position: "relative", height: 300 }}>
       <Image
-        source={require("@/assets/images/kenny.png")}
+        source={{ uri: params.downloadURL }}
         style={{ height: 300, width: "100%" }}
       />
       <LinearGradient
@@ -31,13 +32,13 @@ export const HeaderImage = () => {
           color: "#fff",
         }}
       >
-        Kenny Elias
+        {params?.displayName}
       </Text>
     </View>
   );
 };
 
-export const Header = () => {
+export const Header = (params: any) => {
   const { top } = useSafeAreaInsets();
   return (
     <View
@@ -48,12 +49,12 @@ export const Header = () => {
         gap: 8,
       }}
     >
-      <HeaderLeft />
+      <HeaderLeft {...params} />
     </View>
   );
 };
 
-const HeaderLeft = () => {
+const HeaderLeft = (params: any) => {
   return (
     <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
       <Feather
@@ -67,11 +68,11 @@ const HeaderLeft = () => {
         onPress={() => router.navigate("/(profile)")}
       >
         <Image
-          source={require("@/assets/images/kenny.png")}
+          source={{ uri: params.downloadURL }}
           style={{ width: 40, height: 40, borderRadius: 50 }}
         />
         <Text style={{ fontSize: 20, fontWeight: 600, color: "#fff" }}>
-          Kenny Elias
+          {params.displayName}
         </Text>
       </Pressable>
     </View>

@@ -3,17 +3,18 @@ import {
   Text,
   TextInput as ReactNativeTextInput,
   View,
+  TextInputProps,
 } from "react-native";
 import React, { FC } from "react";
 
-interface inputProps {
+type inputProps = {
   data: {
     label: string;
     name?: string;
     placeholder: string;
   };
-}
-const TextInput: FC<inputProps> = ({ data }) => {
+} & TextInputProps;
+const TextInput: FC<inputProps> = ({ data, ...props }) => {
   return (
     <View>
       <Text style={styles.labelStyle}>{data?.label}</Text>
@@ -21,6 +22,7 @@ const TextInput: FC<inputProps> = ({ data }) => {
         onChangeText={(e) => {}}
         placeholder={data?.placeholder}
         style={styles.textInput}
+        {...props}
       />
     </View>
   );
@@ -39,5 +41,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#171C2208",
   },
   scroll: { paddingVertical: 24 },
-  labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 16 },
+  labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 15 },
 });

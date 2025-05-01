@@ -7,44 +7,64 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import { router } from "expo-router";
-import { chats } from "@/utils/chats";
+import { RelativePathString, router } from "expo-router";
+// import { chats } from "@/utils/chats";
+import { useChat } from "@/providers/AllChatsProvider";
 
 const Chats = () => {
+  const { chats } = useChat();
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
       <View style={styles.chatContainer}>
-        {chats.map((e, i) => (
-          <Pressable
-            onPress={() => router.navigate("/(chats)/yuhjgitu")}
-            key={i}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "rgba(0,0,0,0.1)" : "transparent", // Dark overlay
-              },
-            ]}
-          >
-            <View style={styles.chatCardContainer}>
-              <View style={{ paddingVertical: 8 }}>
-                <Image source={e.image} style={styles.chatImage} />
-              </View>
-              <View style={styles.detailsContainer}>
-                <Text style={styles.chatName}>{e.name}</Text>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={styles.chatText}
-                >
-                  {e.message}
+        {Object.entries(chats ?? {})?.map((e, i) => {
+          return (
+            <Pressable
+              onPress={() =>
+                router.navigate({
+                  pathname: `/(protected)/chats/${e[0]}` as RelativePathString,
+                  params: {
+                    details: JSON.stringify({
+                      ...e[1].userInfo,
+                    }),
+                  },
+                })
+              }
+              key={e[0]}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "rgba(0,0,0,0.1)" : "transparent", // Dark overlay
+                },
+              ]}
+            >
+              <View style={styles.chatCardContainer}>
+                <View style={{ paddingVertical: 8 }}>
+                  <Image
+                    source={{ uri: e[1].userInfo.downloadURL }}
+                    style={styles.chatImage}
+                  />
+                </View>
+                <View style={styles.detailsContainer}>
+                  <Text style={styles.chatName}>
+                    {e[1]?.userInfo.displayName}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={styles.chatText}
+                  >
+                    {e[1]?.lastMessage?.text}
+                  </Text>
+                </View>
+                <Text style={styles.chatTime}>
+                  {e[1]?.date?.toDate()?.toLocaleString()}
                 </Text>
+                {e[1]?.unreadCount && (
+                  <Text style={styles.unreadCount}>{e[1].unreadCount}</Text>
+                )}
               </View>
-              <Text style={styles.chatTime}>{e.time}</Text>
-              {e.unreadCount && (
-                <Text style={styles.unreadCount}>{e.unreadCount}</Text>
-              )}
-            </View>
-          </Pressable>
-        ))}
+            </Pressable>
+          );
+        })}
       </View>
     </ScrollView>
   );

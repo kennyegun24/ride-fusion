@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import TextInput from "@/components/textInput";
 // import TextInput from "../textInput";
 

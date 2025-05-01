@@ -29,7 +29,7 @@ const ProfileOptions = ({ setAction }: ProfileOptionsProps) => {
             <setting.icon
               name={setting.name}
               color={setting.color || "#414141"}
-              size={20}
+              size={18}
             />
             <Text
               style={[
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
   settingOption: { flexDirection: "row", alignItems: "center", gap: 6 },
   optionLabel: {
     fontSize: 16,
-    fontWeight: 300,
+    fontWeight: 400,
   },
 });

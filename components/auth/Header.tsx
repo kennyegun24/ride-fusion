@@ -31,13 +31,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   backView: { flexDirection: "row", alignItems: "center", gap: 4 },
-  backText: { fontSize: 18, color: "#414141" },
+  backText: { fontSize: 16, color: "#414141" },
   headerText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 600,
     marginTop: 16,
     marginBottom: 6,
     color: "#414141",
   },
-  subHeaderText: { fontSize: 16, color: "#7F7F7F" },
+  subHeaderText: { fontSize: 15, color: "#7F7F7F" },
 });

@@ -63,6 +63,13 @@ export default function MyTabs() {
               sceneStyle: { backgroundColor: "#fff" },
             }}
           />
+          <MaterialTopTabs.Screen
+            name="requests"
+            options={{
+              title: "Chat Requests",
+              sceneStyle: { backgroundColor: "#fff" },
+            }}
+          />
         </MaterialTopTabs>
       </SafeAreaView>
     </SafeAreaProvider>

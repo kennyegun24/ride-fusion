@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     borderColor: "#E9E9E9",
   },
   carImage: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     borderRadius: 50,
   },
   imageTextContainer: {
@@ -64,13 +64,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   carName: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 600,
     color: "#414141",
   },
   renterName: {
     color: "#8B8B8B",
-    fontSize: 14,
+    fontSize: 13,
     marginTop: 2,
   },
   enterChatButton: {
@@ -84,5 +84,6 @@ const styles = StyleSheet.create({
   enterChatText: {
     color: "#269355",
     fontWeight: 600,
+    fontSize: 12,
   },
 });
