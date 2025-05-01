@@ -14,6 +14,9 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { ActivityIndicator, View } from "react-native";
 import { RoleProvider } from "@/providers/RoleProvider";
 import { AuthProvider, useAuthenticate } from "@/providers/AuthProvider";
+import { RequestProvider } from "@/providers/RequestProvider";
+import { ToastProvider } from "@/providers/ToastProvider";
+import { ChatProvider } from "@/providers/AllChatsProvider";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -34,41 +37,52 @@ export default function RootLayout() {
     SplashScreen.preventAutoHideAsync();
     return null;
   }
-
   return (
-    <RoleProvider>
-      <AuthProvider>
-        <View style={{ flex: 1 }}>
-          <Stack
-            screenOptions={{
-              gestureEnabled: true,
-            }}
-            initialRouteName="index"
-          >
-            <Stack.Screen
-              name="index"
-              options={{
-                headerShown: false,
-                animation: "slide_from_right",
-              }}
-            />
-            <Stack.Screen
-              name="(auth)"
-              options={{ headerShown: false, animation: "slide_from_left" }}
-            />
-            <Stack.Screen name="(protected)" options={{ headerShown: false }} />
-            {/* <Stack.Screen name="(cars)" options={{ headerShown: false }} />
+    <ToastProvider>
+      <ChatProvider>
+        <RequestProvider>
+          <RoleProvider>
+            <AuthProvider>
+              <View style={{ flex: 1 }}>
+                <Stack
+                  screenOptions={{
+                    gestureEnabled: true,
+                  }}
+                  initialRouteName="index"
+                >
+                  <Stack.Screen
+                    name="index"
+                    options={{
+                      headerShown: false,
+                      animation: "slide_from_right",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{
+                      headerShown: false,
+                      animation: "slide_from_left",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="(protected)"
+                    options={{ headerShown: false }}
+                  />
+                  {/* <Stack.Screen name="(cars)" options={{ headerShown: false }} />
             <Stack.Screen name="(chats)" options={{ headerShown: false }} />
             <Stack.Screen name="(profile)" options={{ headerShown: false }} />
             <Stack.Screen
               name="(userProfile)"
               options={{ headerShown: false }}
             /> */}
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style={"auto"} hidden />
-        </View>
-      </AuthProvider>
-    </RoleProvider>
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style={"auto"} hidden={false} />
+              </View>
+            </AuthProvider>
+          </RoleProvider>
+        </RequestProvider>
+      </ChatProvider>
+    </ToastProvider>
   );
 }
