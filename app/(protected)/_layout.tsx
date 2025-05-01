@@ -4,30 +4,46 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Redirect, Stack } from "expo-router";
+import { Redirect, router, Stack, useFocusEffect } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { ActivityIndicator, View } from "react-native";
-import { useAuthenticate } from "@/providers/AuthProvider";
+import { View } from "react-native";
+import { usePreventBack } from "@/hooks/usePreventBack";
+import { useCallback } from "react";
+import { getAuth } from "firebase/auth";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { isAuthenticated } = useAuthenticate();
+  usePreventBack();
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = getAuth().onAuthStateChanged((user) => {
+        if (!user) {
+          router.push("/(auth)/select-account-type");
+        }
+      });
+      unsubscribe;
 
-  if (!isAuthenticated) {
-    return <Redirect href={"/(auth)/login"} />;
-  }
+      return unsubscribe;
+    }, [])
+  );
+
+  // if (!isAuthenticated) {
+  //   return <Redirect href={"/(auth)/login"} />;
+  // }
 
   return (
     <View style={{ flex: 1 }}>
+      <StatusBar hidden={false} style="auto" />
       <Stack
         screenOptions={{
           gestureEnabled: true,
         }}
+        initialRouteName="(tabs)"
       >
         <Stack.Screen
           name="(tabs)"
@@ -38,7 +54,7 @@ export default function RootLayout() {
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
         <Stack.Screen
-          name="(chats)"
+          name="chats"
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
         <Stack.Screen
@@ -50,7 +66,7 @@ export default function RootLayout() {
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
       </Stack>
-      <StatusBar style={"auto"} hidden />
+      <StatusBar style={"auto"} hidden={false} />
     </View>
   );
 }
