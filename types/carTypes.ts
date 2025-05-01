@@ -11,4 +11,13 @@ export interface CarObjProps {
   details: string[];
   rating: number;
   all_reviews: any[];
+
+  images: string[];
+  model?: string;
+  downloadURL?: string;
+  fullName?: string;
+  rentalPricePerDay?: number;
+  available?: boolean;
+  user?: any;
+  _id?: string;
 }
