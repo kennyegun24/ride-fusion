@@ -1,12 +1,30 @@
+import { auth } from "@/firebase";
 import { usePreventBack } from "@/hooks/usePreventBack";
-import { Stack } from "expo-router";
+import { useRegistrationState } from "@/hooks/useRegisterationState";
+import { router, Stack, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { getAuth } from "firebase/auth";
+import { useCallback, useEffect } from "react";
 import { View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
+  const registrationComplete = useRegistrationState(
+    (state) => state.registrationComplete
+  );
+
   usePreventBack();
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = getAuth().onAuthStateChanged((user) => {
+        if (user && registrationComplete) {
+          router.push("/(protected)/(tabs)");
+        }
+      });
+      unsubscribe;
+
+      return unsubscribe;
+    }, [registrationComplete])
+  );
   return (
     // <SafeAreaProvider style={{ backgroundColor: "white", flex: 1 }}>
     <View style={{ flex: 1, backgroundColor: "purple" }}>
@@ -29,7 +47,7 @@ export default function RootLayout() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="login"
+          name="index"
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
         <Stack.Screen

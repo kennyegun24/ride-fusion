@@ -57,10 +57,6 @@ const SelectAccountType = () => {
         >
           Select either option
         </Snackbar>
-        {/* <Header
-          header="What would you like to do?"
-          subHeader="Choose how you want to use the app today."
-        /> */}
         <Text style={styles.headerText}>What would you like to do?</Text>
         <Text style={styles.subHeaderText}>
           Choose how you want to use the app today.
@@ -89,7 +85,7 @@ const SelectAccountType = () => {
             <Text style={styles.continueText}>Continue</Text>
           </TouchableOpacity>
           <Pressable
-            onPress={() => router.push("/(auth)/login")}
+            onPress={() => router.push("/(auth)")}
             style={styles.haveAccountButton}
           >
             <Text style={styles.haveAccountText}>Already have an account?</Text>
@@ -104,7 +100,7 @@ export default SelectAccountType;
 
 const styles = StyleSheet.create({
   headerText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 600,
     marginTop: 16,
     marginBottom: 6,
@@ -131,7 +127,7 @@ const styles = StyleSheet.create({
   },
   continueText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
     marginHorizontal: "auto",
   },
   haveAccountButton: {
