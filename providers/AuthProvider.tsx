@@ -7,6 +7,7 @@ import {
 } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useRole } from "./RoleProvider";
+import Splash from "@/components/global/Splash";
 
 const RoleContext = createContext({
   isAuthenticated: false,
@@ -36,7 +37,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   if (isAuthenticated === undefined) {
     return (
       <View style={{ flex: 1 }}>
-        <ActivityIndicator style={{ margin: "auto" }} size={"small"} />
+        {/* <ActivityIndicator style={{ margin: "auto" }} size={"small"} /> */}
+        <Splash />
       </View>
     );
   }
