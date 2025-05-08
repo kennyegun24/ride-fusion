@@ -6,6 +6,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  useColorScheme,
 } from "react-native";
 import React, { FC, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,11 +28,15 @@ import { FirebaseError } from "firebase/app";
 import axios from "axios";
 import { useRegistrationState } from "@/hooks/useRegisterationState";
 import { useRequest } from "@/providers/RequestProvider";
+import { API_ROUTE } from "@/utils/apiRoute";
+import { ThemedView } from "@/components/ThemedView";
+import { useToast } from "@/providers/ToastProvider";
 type DriverFormValues = z.infer<typeof driverSchema>;
 
 const signupDriver = () => {
-  const [showModal, setShowModal] = useState(false);
   const { triggerLoader, sending } = useRequest();
+  const theme = useColorScheme();
+  const { showToast } = useToast();
   const register = async (e: any) => {
     try {
       triggerLoader(true);
@@ -53,6 +58,8 @@ const signupDriver = () => {
           driversLicenseType: e.driversLicenseType,
           address: e.address,
           yearsOfExperience: e.yearsOfExperience,
+          state: "Lagos",
+          city: "Ipaja",
         };
         await updateProfile(user, {
           displayName: e.fullName,
@@ -65,7 +72,7 @@ const signupDriver = () => {
         const idToken = await user.getIdToken();
 
         await axios.post(
-          "http://172.20.10.3:4000/api/auth/register",
+          `${API_ROUTE}auth/register`,
           { ...dataToSend },
           {
             headers: {
@@ -79,95 +86,119 @@ const signupDriver = () => {
     } catch (error) {
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
-        const errorMessage = error.message;
+        if (
+          errorCode === "auth/invalid-credential" ||
+          errorCode === "auth/email-already-in-use" ||
+          errorCode === "auth/invalid-email" ||
+          errorCode === "auth/wrong-password"
+        ) {
+          return showToast({
+            text1: "Invalid credentials",
+            text2: "Password or Email is wrong",
+            toastType: "error",
+          });
+        } else if (errorCode === "auth/too-many-requests") {
+          return showToast({
+            text1: "Too many attempts",
+            text2: "Try again later",
+            toastType: "error",
+          });
+        }
       }
+      console.log(error, "err");
+      return showToast({
+        toastType: "error",
+        text1: "Something went wrong",
+      });
     } finally {
-      setShowModal(true);
       triggerLoader(false);
     }
   };
   const { control, handleSubmit } = useForm<DriverFormValues>({
     resolver: zodResolver(driverSchema),
     defaultValues: {
-      fullName: "Kenny Egun",
-      email: "kennyegun240@gmail.com",
-      phone: "+2348025464789",
-      password: "Elias-2001",
-      confirmPassword: "Elias-2001",
-      address: "Block N18, flat 3, abesan estate, Ipaja, Lagos state",
+      fullName: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      address: "",
       // proofOfAddress: "",
       // faceCaptureVerification: "",
       // validPlatformAccounts: "",
-      yearsOfExperience: "2",
+      yearsOfExperience: "",
     },
   });
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <StatusBar style="auto" />
-        <Header
-          header="Create Your Account"
-          subHeader="Book cars near you anytime, anywhere. Let's get you moving"
-        />
-        {showModal && <AccountCreated />}
-        <ScrollView
-          // overScrollMode="always"
-          style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
+    <ThemedView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
         >
-          <View style={{ gap: 12, flex: 1, paddingVertical: 12 }}>
-            {driverCredentials.map((e) => (
-              <View key={e.key}>
-                {!e.options ? (
-                  <ValidateInput
-                    label={e.label}
-                    name={e.key}
-                    placeholder={e.placeholder}
-                    control={control}
-                    secureTextEntry={e.key.toLowerCase().includes("password")}
-                    keyboardType={
-                      e.key === "email"
-                        ? "email-address"
-                        : e.key === "phone"
-                        ? "phone-pad"
-                        : "default"
-                    }
-                  />
-                ) : (
-                  <ValidateSelect
-                    placeholder={e?.placeholder}
-                    data={e.options}
-                    control={control}
-                    name={e.key}
-                    label={e.label}
-                  />
-                )}
-              </View>
-            ))}
-          </View>
-        </ScrollView>
-        {/* </OverScrollView> */}
-        <View style={styles.btnContainer}>
-          <Pressable
-            onPress={sending ? null : handleSubmit(register)}
-            style={[
-              styles.authButton,
-              {
-                backgroundColor: sending ? "gray" : "#269355",
-              },
-            ]}
+          <StatusBar style="auto" />
+          <Header
+            header="Create Your Account"
+            subHeader="Book cars near you anytime, anywhere. Let's get you moving"
+          />
+          <ScrollView
+            // overScrollMode="always"
+            style={{ flex: 1 }}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.authText}>Create Account</Text>
-          </Pressable>
-          <Link href={"/(auth)"} style={styles.authButton2}>
-            <Text style={styles.authText2}>Already have an account</Text>
-          </Link>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <View style={{ gap: 12, flex: 1, paddingVertical: 12 }}>
+              {driverCredentials.map((e) => (
+                <View key={e.key}>
+                  {!e.options ? (
+                    <ValidateInput
+                      theme={theme}
+                      label={e.label}
+                      name={e.key}
+                      placeholder={e.placeholder}
+                      control={control}
+                      secureTextEntry={e.key.toLowerCase().includes("password")}
+                      keyboardType={
+                        e.key === "email"
+                          ? "email-address"
+                          : e.key === "phone"
+                          ? "phone-pad"
+                          : "default"
+                      }
+                    />
+                  ) : (
+                    <ValidateSelect
+                      placeholder={e?.placeholder}
+                      data={e.options}
+                      control={control}
+                      name={e.key}
+                      label={e.label}
+                      theme={theme}
+                    />
+                  )}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+          {/* </OverScrollView> */}
+          <View style={styles.btnContainer}>
+            <Pressable
+              onPress={sending ? null : handleSubmit(register)}
+              style={[
+                styles.authButton,
+                {
+                  backgroundColor: sending ? "gray" : "#269355",
+                },
+              ]}
+            >
+              <Text style={styles.authText}>Create Account</Text>
+            </Pressable>
+            <Link href={"/(auth)"} style={styles.authButton2}>
+              <Text style={styles.authText2}>Already have an account</Text>
+            </Link>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </ThemedView>
   );
 };
 
@@ -183,7 +214,7 @@ const styles = StyleSheet.create({
   scroll: { paddingVertical: 24 },
   labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 16 },
   authButton: {
-    backgroundColor: "#269355",
+    // backgroundColor: "#269355",
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderRadius: 50,

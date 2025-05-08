@@ -19,6 +19,10 @@ import SelectedImages from "@/components/list-car/SelectedImages";
 import { uploadImages } from "@/utils/uploadToCloudinary";
 import useAuth from "@/hooks/userAuth";
 import axios from "axios";
+import { useRequest } from "@/providers/RequestProvider";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { API_ROUTE } from "@/utils/apiRoute";
 
 const { width } = Dimensions.get("screen");
 
@@ -33,15 +37,16 @@ const signupDriver = () => {
   const [images, setImages] = useState<ImageAsset[]>([]);
   const { user } = useAuth();
   const params = useLocalSearchParams();
+  const { triggerLoader, sending } = useRequest();
 
   const procees = async () => {
+    triggerLoader(true);
     const idToken = await user?.getIdToken();
-    // router.push("/list-car/documentation");
     try {
       if (user) {
         const downloadURI = await uploadImages(images, user);
         await axios.post(
-          "http://172.20.10.3:4000/api/cars/create-car",
+          `${API_ROUTE}cars/create-car`,
           {
             images: downloadURI,
             ...params,
@@ -63,6 +68,8 @@ const signupDriver = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      triggerLoader(false);
     }
   };
 
@@ -72,37 +79,39 @@ const signupDriver = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <StatusBar style="auto" />
-        <Header
-          header="Documentation "
-          subHeader="Upload valid documents to verify your car. And also a max of 10 images of your car for people to see."
-        />
-        <ScrollView
-          overScrollMode="always"
-          style={{ paddingVertical: 24, flex: 1 }}
-          showsVerticalScrollIndicator={false}
+    <ThemedView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
         >
-          <Text style={styles.header}>
-            Vehicle Image{" "}
-            <Text style={styles.subHeader}>(at least 5 images)</Text>
-          </Text>
-          <View style={styles.imageContainer}>
-            <UploadImageButton setImages={setImages} width={width} />
-            <SelectedImages remove={onRemoveImage} images={images} />
+          <StatusBar style="auto" />
+          <Header
+            header="Documentation "
+            subHeader="Upload valid documents to verify your car. And also a max of 10 images of your car for people to see."
+          />
+          <ScrollView
+            overScrollMode="always"
+            style={{ paddingVertical: 24, flex: 1 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <ThemedText style={styles.header}>
+              Vehicle Image{" "}
+              <Text style={styles.subHeader}>(at least 5 images)</Text>
+            </ThemedText>
+            <View style={styles.imageContainer}>
+              <UploadImageButton setImages={setImages} width={width} />
+              <SelectedImages remove={onRemoveImage} images={images} />
+            </View>
+          </ScrollView>
+          <View style={styles.btnContainer}>
+            <Pressable onPress={procees} style={styles.authButton}>
+              <Text style={styles.authText}>List Car</Text>
+            </Pressable>
           </View>
-        </ScrollView>
-        <View style={styles.btnContainer}>
-          <Pressable onPress={procees} style={styles.authButton}>
-            <Text style={styles.authText}>List Car</Text>
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </ThemedView>
   );
 };
 

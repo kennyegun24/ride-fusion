@@ -4,21 +4,25 @@ import {
   TextInput as ReactNativeTextInput,
   View,
   TextInputProps,
+  ColorSchemeName,
 } from "react-native";
 import React, { FC } from "react";
 import { Controller } from "react-hook-form";
+import { ThemedText } from "../ThemedText";
 
 type inputProps = {
   control: any;
   label: string;
   name: string;
   placeholder: string;
+  theme: ColorSchemeName;
 } & TextInputProps;
 const ValidateITextArea = ({
   label,
   name,
   placeholder,
   control,
+  theme,
   ...props
 }: inputProps) => {
   return (
@@ -39,11 +43,12 @@ const ValidateITextArea = ({
         console.log(error);
         return (
           <>
-            <Text
-              style={[styles.labelStyle, { color: error ? "red" : "#4B524E" }]}
+            <ThemedText
+              lightColor={error ? "red" : "#4B524E"}
+              darkColor={error ? "red" : "#fff"}
             >
               {label}
-            </Text>
+            </ThemedText>
             <ReactNativeTextInput
               multiline={true}
               numberOfLines={4}
@@ -53,7 +58,13 @@ const ValidateITextArea = ({
               onChangeText={onChange}
               onBlur={onBlur}
               {...props}
-              style={[styles.textInput, { ...errorField }]}
+              style={[
+                styles.textInput,
+                {
+                  ...errorField,
+                  color: theme === "light" ? "#000" : "#b6b6b6",
+                },
+              ]}
             />
             {error && <Text style={styles.errorText}>{error?.message}</Text>}
           </>

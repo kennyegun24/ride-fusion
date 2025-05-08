@@ -1,47 +1,59 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  View,
+} from "react-native";
 import React from "react";
+import { Entypo } from "@expo/vector-icons";
+import OtherCar from "../global/OtherCar";
+import { router } from "expo-router";
+import { ThemedText } from "../ThemedText";
 
-const CarListings = () => {
+type carsProps = {
+  cars: {
+    images: string[];
+    car_name: string;
+    rentalPricePerDay: number;
+    _id: string;
+  }[];
+  hasMore: boolean;
+  user: any;
+};
+
+const CarListings = ({ cars, hasMore, user }: carsProps) => {
   return (
     <View style={{ marginTop: 8 }}>
-      <Text style={styles.overviewHeader}>Car Listings</Text>
+      <ThemedText style={styles.overviewHeader}>Car Listings</ThemedText>
 
       <ScrollView
         horizontal
-        style={{ marginVertical: 18 }}
+        style={{ marginBottom: 18, marginTop: 12 }}
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.scroll}>
-          <View style={styles.carList}>
-            <Image
-              source={require("@assets/images/audi1.webp")}
-              style={styles.carImage}
-            />
-            <View style={styles.nameContainer}>
-              <Text style={styles.carName}>Toyota Hilux 2022</Text>
-              <Text style={styles.price}>NGN30,000</Text>
-            </View>
-          </View>
-          <View style={styles.carList}>
-            <Image
-              source={require("@assets/images/audi1.webp")}
-              style={styles.carImage}
-            />
-            <View style={styles.nameContainer}>
-              <Text style={styles.carName}>Toyota Hilux 2022</Text>
-              <Text style={styles.price}>NGN30,000</Text>
-            </View>
-          </View>
-          <View style={styles.carList}>
-            <Image
-              source={require("@assets/images/audi1.webp")}
-              style={styles.carImage}
-            />
-            <View style={styles.nameContainer}>
-              <Text style={styles.carName}>Toyota Hilux 2022</Text>
-              <Text style={styles.price}>NGN30,000</Text>
-            </View>
-          </View>
+          {cars.map((e, _) => (
+            <OtherCar key={e._id} details={e} />
+          ))}
+          {hasMore && (
+            <TouchableNativeFeedback
+              onPressIn={() =>
+                router.push({
+                  pathname: "/(protected)/allCars",
+                  params: {
+                    id: user._id,
+                    fullName: user.fullName,
+                  },
+                })
+              }
+            >
+              <View style={styles.seeMore}>
+                <Text style={{ fontWeight: 700 }}>See More</Text>
+                <Entypo name="chevron-thin-right" size={16} color="black" />
+              </View>
+            </TouchableNativeFeedback>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -53,16 +65,20 @@ export default CarListings;
 const styles = StyleSheet.create({
   overviewHeader: { fontSize: 17, fontWeight: 600 },
   scroll: { flexDirection: "row", gap: 12 },
-  carList: {
-    borderRadius: 12,
-    overflow: "hidden",
-    width: 150,
-    borderColor: "#E9E9E9",
-    borderWidth: 1,
-    backgroundColor: "#171C2208",
+  seeMore: {
+    height: 85,
+    width: 85,
+    padding: 12,
+    borderRadius: 75,
+    backgroundColor: "#f4f4f4",
+    elevation: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: "auto",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    flexDirection: "row",
+    gap: 2,
+    shadowRadius: 10,
   },
-  carImage: { width: 150, height: 90 },
-  nameContainer: { paddingHorizontal: 8, paddingVertical: 12 },
-  carName: { color: "#8B8B8B", fontSize: 15 },
-  price: { color: "#269355", fontSize: 15, fontWeight: 600, marginTop: 6 },
 });

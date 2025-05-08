@@ -6,6 +6,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  useColorScheme,
 } from "react-native";
 import React, { FC, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ValidateSelect from "@/components/forms/ValidateSelect";
 import { basicCarInfoFields } from "@/utils/list-car";
 import { basicCarSchema } from "@/schema/list-car-validationSchema";
+import { ThemedView } from "@/components/ThemedView";
 
 type DriverFormValues = z.infer<typeof basicCarSchema>;
 
@@ -43,55 +45,63 @@ const signupDriver = () => {
       seats: 5,
     },
   });
+  const theme = useColorScheme();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <StatusBar style="auto" />
-        <Header
-          header="Basic Car Info"
-          subHeader="Put the basic information about your car before proceeding."
-        />
-        <ScrollView
-          overScrollMode="always"
-          style={{ paddingVertical: 24 }}
-          showsVerticalScrollIndicator={false}
+    <ThemedView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
         >
-          <View style={{ gap: 12 }}>
-            {basicCarInfoFields.map((e) => (
-              <View key={e.key}>
-                {!e.options ? (
-                  <ValidateInput
-                    label={e.label}
-                    name={e.key}
-                    placeholder={e.placeholder}
-                    control={control}
-                    keyboardType={
-                      e.type === "number" ? "number-pad" : "default"
-                    }
-                  />
-                ) : (
-                  <ValidateSelect
-                    placeholder={e?.placeholder}
-                    data={e.options}
-                    control={control}
-                    name={e.key}
-                    label={e.label}
-                  />
-                )}
-              </View>
-            ))}
+          <StatusBar style="auto" />
+          <Header
+            header="Basic Car Info"
+            subHeader="Put the basic information about your car before proceeding."
+          />
+          <ScrollView
+            overScrollMode="always"
+            style={{ paddingVertical: 24 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={{ gap: 12 }}>
+              {basicCarInfoFields.map((e) => (
+                <View key={e.key}>
+                  {!e.options ? (
+                    <ValidateInput
+                      label={e.label}
+                      name={e.key}
+                      placeholder={e.placeholder}
+                      control={control}
+                      keyboardType={
+                        e.type === "number" ? "number-pad" : "default"
+                      }
+                      theme={theme}
+                    />
+                  ) : (
+                    <ValidateSelect
+                      placeholder={e?.placeholder}
+                      data={e.options}
+                      control={control}
+                      name={e.key}
+                      label={e.label}
+                      theme={theme}
+                    />
+                  )}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+          <View style={styles.btnContainer}>
+            <Pressable
+              onPress={handleSubmit(procees)}
+              style={styles.authButton}
+            >
+              <Text style={styles.authText}>Proceed</Text>
+            </Pressable>
           </View>
-        </ScrollView>
-        <View style={styles.btnContainer}>
-          <Pressable onPress={handleSubmit(procees)} style={styles.authButton}>
-            <Text style={styles.authText}>Proceed</Text>
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </ThemedView>
   );
 };
 

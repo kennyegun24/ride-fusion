@@ -7,6 +7,8 @@ import {
   View,
 } from "react-native";
 import React, { FC } from "react";
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
 
 interface HistoryCardProps {
   data: {
@@ -21,21 +23,44 @@ interface HistoryCardProps {
 
 const HistoryCard: FC<HistoryCardProps> = ({ data }) => {
   return (
-    <View style={styles.cardContainer}>
+    <ThemedView
+      darkColor="#2F2F2F"
+      border_d_color="#E0E0E040"
+      border_l_color="#e9e9e9"
+      style={styles.cardContainer}
+    >
       <View style={styles.imageTextContainer}>
         <Image style={styles.carImage} source={data.image} />
         <View style={""}>
-          <Text style={styles.carName}>{data.carName}</Text>
-          <Text style={styles.renterName}>{data.renterName}</Text>
-          <Text style={styles.renterName}>
+          <ThemedText
+            lightColor="#414141"
+            darkColor="#fff"
+            style={styles.carName}
+          >
+            {data.carName}
+          </ThemedText>
+          <ThemedText
+            lightColor="#8B8B8B"
+            darkColor="#a1a1a1"
+            style={styles.renterName}
+          >
+            {data.renterName}
+          </ThemedText>
+          <ThemedText
+            lightColor="#8B8B8B"
+            darkColor="#a1a1a1"
+            style={styles.renterName}
+          >
             {data.dateCompleted || data.dateRequested || data.dateStarted}
-          </Text>
+          </ThemedText>
         </View>
       </View>
       <TouchableHighlight style={styles.enterChatButton}>
-        <Text style={styles.enterChatText}>Chat Renter</Text>
+        <ThemedText lightColor="" darkColor="" style={styles.enterChatText}>
+          Chat Renter
+        </ThemedText>
       </TouchableHighlight>
-    </View>
+    </ThemedView>
   );
 };
 
@@ -48,10 +73,8 @@ const styles = StyleSheet.create({
     padding: 14,
     alignItems: "flex-start",
     marginBottom: 16,
-    backgroundColor: "#171C2208",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E9E9E9",
   },
   carImage: {
     height: 40,
@@ -66,12 +89,14 @@ const styles = StyleSheet.create({
   carName: {
     fontSize: 15,
     fontWeight: 600,
-    color: "#414141",
+    // color: "#414141",
+    lineHeight: 20,
   },
   renterName: {
-    color: "#8B8B8B",
+    // color: "#8B8B8B",
     fontSize: 13,
     marginTop: 2,
+    lineHeight: 20,
   },
   enterChatButton: {
     borderWidth: 1,
@@ -85,5 +110,6 @@ const styles = StyleSheet.create({
     color: "#269355",
     fontWeight: 600,
     fontSize: 12,
+    lineHeight: 20,
   },
 });

@@ -1,8 +1,18 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
+import { router } from "expo-router";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
 
 const Filters = () => {
   const [filter, setFilter] = useState<string>("");
+  const onClick = (e: string) => {
+    setFilter(e);
+    router.navigate({
+      pathname: "/(protected)/searched-cars",
+      params: { text: e },
+    });
+  };
   return (
     <View style={styles.container}>
       <ScrollView
@@ -12,27 +22,24 @@ const Filters = () => {
       >
         <View style={styles.optionsContainer}>
           {options.map((e, _) => (
-            <Pressable
+            <ThemedView
+              darkColor={filter === e ? "#269355" : "#2F2F2F"}
+              lightColor={filter === e ? "#269355" : "#171C2208"}
+              border_d_color="#E0E0E040"
+              border_l_color="#e9e9e9"
               key={_}
-              onPress={() => setFilter(e)}
-              style={[
-                styles.btn,
-                {
-                  backgroundColor: filter === e ? "#269355" : "#171C2208",
-                  borderColor: filter === e ? "#269355" : "#E9E9E9",
-                  borderWidth: 1,
-                },
-              ]}
+              style={styles.btn}
             >
-              <Text
-                style={[
-                  styles.btnText,
-                  { color: filter === e ? "#fff" : "#000" },
-                ]}
-              >
-                {e}
-              </Text>
-            </Pressable>
+              <Pressable onPress={() => onClick(e)}>
+                <ThemedText
+                  style={[styles.btnText, {}]}
+                  darkColor={filter === e ? "#fff" : "#fff"}
+                  lightColor={filter === e ? "#fff" : "#000"}
+                >
+                  {e}
+                </ThemedText>
+              </Pressable>
+            </ThemedView>
           ))}
         </View>
       </ScrollView>
@@ -59,7 +66,6 @@ const styles = StyleSheet.create({
   btnText: {
     textAlign: "center",
     fontSize: 13,
-    color: "#fff",
   },
 });
 

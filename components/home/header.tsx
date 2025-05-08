@@ -3,6 +3,8 @@ import React from "react";
 import { EvilIcons } from "@expo/vector-icons";
 import useAuth from "@/hooks/userAuth";
 import useNotifications from "@/hooks/useNotifications";
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
 
 const Header = () => {
   const { user } = useAuth();
@@ -21,19 +23,29 @@ const Header = () => {
         />
         <View style={{}}>
           <Text style={styles.header}>Welcome back</Text>
-          <Text style={styles.name}>{user?.displayName}</Text>
+          <ThemedText style={styles.name}>{user?.displayName}</ThemedText>
         </View>
       </View>
       <View style={styles.flexGapRow}>
-        <View style={styles.iconContainer}>
+        <ThemedView
+          border_l_color="#E0E0E069"
+          border_d_color="#E0E0E040"
+          lightColor="#E0E0E069"
+          style={styles.iconContainer}
+        >
           <EvilIcons
             style={styles.icon}
             name="location"
             size={24}
             color="#269355"
           />
-        </View>
-        <View style={styles.iconContainer}>
+        </ThemedView>
+        <ThemedView
+          border_l_color="#E0E0E069"
+          border_d_color="#E0E0E040"
+          lightColor="#E0E0E069"
+          style={styles.iconContainer}
+        >
           <EvilIcons
             style={styles.icon}
             name="bell"
@@ -58,7 +70,7 @@ const Header = () => {
           >
             {notifications.length}
           </Text>
-        </View>
+        </ThemedView>
       </View>
     </View>
   );
@@ -82,7 +94,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     // elevation: 2,
-    backgroundColor: "#E0E0E069",
+    // backgroundColor: "#E0E0E069",
+    borderWidth: 1,
     borderRadius: 50,
     height: 40,
     width: 40,

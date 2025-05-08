@@ -42,15 +42,17 @@ const toastConfig = {
     <ErrorToast
       {...props}
       style={{
-        backgroundColor: "red",
+        backgroundColor: "#a12e2e",
         zIndex: 99999,
       }}
       text1Style={{
         fontSize: 17,
         fontWeight: 600,
+        color: "#fff",
       }}
       text2Style={{
         fontSize: 15,
+        color: "#e6e6e6",
       }}
     />
   ),

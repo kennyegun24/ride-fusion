@@ -1,30 +1,29 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { useFonts } from "expo-font";
 import { Redirect, router, Stack, useFocusEffect } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
-
-import { View } from "react-native";
 import { usePreventBack } from "@/hooks/usePreventBack";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { getAuth } from "firebase/auth";
+import { ThemedView } from "@/components/ThemedView";
+import { usePresence } from "@/hooks/usePresence";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [userId, setUserId] = useState<string | null>(null);
+  usePresence(userId);
+  usePushNotifications(userId);
   usePreventBack();
   useFocusEffect(
     useCallback(() => {
       const unsubscribe = getAuth().onAuthStateChanged((user) => {
         if (!user) {
-          router.push("/(auth)/select-account-type");
+          return router.push("/(auth)/select-account-type");
         }
+        setUserId(user.uid);
       });
       unsubscribe;
 
@@ -37,7 +36,7 @@ export default function RootLayout() {
   // }
 
   return (
-    <View style={{ flex: 1 }}>
+    <ThemedView style={{ flex: 1 }}>
       <StatusBar hidden={false} style="auto" />
       <Stack
         screenOptions={{
@@ -50,7 +49,7 @@ export default function RootLayout() {
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
         <Stack.Screen
-          name="(cars)"
+          name="cars-pages"
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
         <Stack.Screen
@@ -65,8 +64,33 @@ export default function RootLayout() {
           name="(userProfile)"
           options={{ headerShown: false, animation: "slide_from_right" }}
         />
+        <Stack.Screen
+          name="allReviews"
+          options={{
+            headerTitle: "Reviews",
+            animation: "slide_from_right",
+            headerBackButtonDisplayMode: "minimal",
+          }}
+        />
+        <Stack.Screen
+          name="allCars"
+          options={{
+            headerTitle: "Cars",
+            animation: "slide_from_right",
+            headerBackButtonDisplayMode: "minimal",
+          }}
+        />
+        <Stack.Screen
+          name="searched-cars"
+          options={{
+            headerShown: false,
+            headerTitle: "Search",
+            animation: "slide_from_right",
+            headerBackButtonDisplayMode: "minimal",
+          }}
+        />
       </Stack>
       <StatusBar style={"auto"} hidden={false} />
-    </View>
+    </ThemedView>
   );
 }

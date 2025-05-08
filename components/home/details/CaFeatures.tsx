@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
 import { Octicons } from "@expo/vector-icons";
+import { ThemedText } from "@/components/ThemedText";
 
 interface CarFeatureProps {
   details: any;
@@ -8,8 +9,8 @@ interface CarFeatureProps {
 
 const CaFeatures: FC<CarFeatureProps> = ({ details }) => {
   return (
-    <View style={{ marginBottom: 18 }}>
-      <Text style={styles.featuresHeader}>Car Features</Text>
+    <View style={{ marginBottom: 18, marginTop: 12 }}>
+      <ThemedText style={styles.featuresHeader}>Car Features</ThemedText>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.scrollContainer}>
           <Text style={styles.btnText}>{details.seats} seats</Text>
@@ -35,5 +36,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#2693550D",
     fontSize: 12,
   },
-  featuresHeader: { color: "#414141", fontSize: 17, marginBottom: 6 },
+  featuresHeader: { fontSize: 17, marginBottom: 6 },
 });

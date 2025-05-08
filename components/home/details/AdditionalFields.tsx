@@ -8,6 +8,11 @@ import { useToast } from "@/providers/ToastProvider";
 import axios from "axios";
 import useAuth from "@/hooks/userAuth";
 import { useRequest } from "@/providers/RequestProvider";
+import { router } from "expo-router";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import BottomButtons from "@/components/global/BottomButtons";
+import { sendChatRequest } from "@/helper/sendChatRequest";
 
 type props = {
   brand: string;
@@ -38,6 +43,7 @@ type userProps = {
   fullName: string;
   downloadURL: string;
   rating: number;
+  uid: string;
 };
 
 export const OwnerDetails = ({
@@ -45,90 +51,78 @@ export const OwnerDetails = ({
   fullName,
   downloadURL,
   rating,
+  uid,
 }: userProps) => {
   return (
-    <View style={styles.ownerImgContainer}>
+    <Pressable
+      onPress={() =>
+        router.navigate({ pathname: "/(protected)/(profile)", params: { uid } })
+      }
+      style={styles.ownerImgContainer}
+    >
       <Image source={{ uri: downloadURL }} style={styles.ownerImg} />
       <View>
-        <Text style={styles.ownerName}>{fullName}</Text>
+        <ThemedText style={styles.ownerName}>{fullName}</ThemedText>
         <View style={styles.ratingContainer}>
-          <Text style={styles.ratingNumber}>{rating}</Text>
+          <ThemedText darkColor="#f2f2f2" style={styles.ratingNumber}>
+            {rating}
+          </ThemedText>
           <DynamicStarRating rating={rating || 0} size={16} />
-          <Text style={styles.ratingNumber}>{reviewsLength} Reviews</Text>
+          <ThemedText darkColor="#f2f2f2" style={styles.ratingNumber}>
+            {reviewsLength} Reviews
+          </ThemedText>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
 type bottomProp = {
   rentalPricePerDay: number;
   userId: string;
-  showChat: boolean;
+  showRight: boolean;
 };
 
 export const BottomView = ({
   rentalPricePerDay,
   userId,
-  showChat,
+  showRight,
 }: bottomProp) => {
-  const [isModalVisible, setModalVisible] = useState(false);
   const { showToast } = useToast();
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
 
   const { triggerLoader } = useRequest();
   const { user } = useAuth();
 
   const sendRequest = async () => {
-    try {
-      triggerLoader(true);
-      setModalVisible(false);
-      const token = await user?.getIdToken();
-      if (!token) return;
-      const req = await axios.post(
-        "http://172.20.10.3:4000/api/chat/request",
-        {
-          receiverId: userId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // ⬅️ send token in headers
-          },
-        }
-      );
-      showToast({ text1: "Message request sent", toastType: "success" });
-    } catch (error) {
-      showToast({
-        text1: "Request already sent or something went wrong",
-        toastType: "error",
-      });
-    } finally {
-      triggerLoader(false);
-    }
+    await sendChatRequest({ triggerLoader, userId, showToast, user });
   };
 
   return (
-    <View style={styles.bottomButtonsContainer}>
-      <ModalComponent
-        closeModal={toggleModal}
-        isModalVisible={isModalVisible}
-        title="Are you sure you want to make message request with this person"
-        rightButtonText="Yes"
-        rightClick={sendRequest}
-      />
-      <Text style={{ fontSize: 17, fontWeight: 600 }}>
-        ${number_formatter(rentalPricePerDay)}
-      </Text>
-      {showChat && (
-        <Pressable onPress={toggleModal} style={styles.messageRender}>
-          <AntDesign name="message1" size={16} color="#fff" />
-          <Text style={styles.messageRenderText}>Message Render</Text>
-        </Pressable>
-      )}
-    </View>
+    // <ThemedView style={styles.bottomButtonsContainer}>
+    //   <ModalComponent
+    //     closeModal={toggleModal}
+    //     isModalVisible={isModalVisible}
+    //     title="Are you sure you want to make message request with this person"
+    //     rightButtonText="Yes"
+    //     rightClick={sendRequest}
+    //   />
+    //   <ThemedText darkColor="#f4f4f4" style={{ fontSize: 17, fontWeight: 600 }}>
+
+    //   </ThemedText>
+    //   {showRight && (
+    //     <Pressable onPress={toggleModal} style={styles.messageRender}>
+    //       <AntDesign name="message1" size={16} color="#fff" />
+    //       <Text style={styles.messageRenderText}>Message Render</Text>
+    //     </Pressable>
+    //   )}
+    // </ThemedView>
+    <BottomButtons
+      leftText={number_formatter(rentalPricePerDay)}
+      modalRightClick={sendRequest}
+      showRight={showRight}
+      modalTitle="Are you sure you want to make message request with this person"
+      modalRightButtonText="Yes"
+    />
   );
 };
 
@@ -142,11 +136,11 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   ownerImg: { width: 40, height: 40, borderRadius: 50 },
-  ownerName: { fontWeight: 600, fontSize: 16, color: "#414141" },
+  ownerName: { fontWeight: 600, fontSize: 16 },
   ratingContainer: { flexDirection: "row", gap: 4 },
-  ratingNumber: { color: "#6D6D6D", fontSize: 13 },
+  ratingNumber: { fontSize: 13 },
   bottomButtonsContainer: {
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     paddingHorizontal: 16,
     paddingVertical: 16,
     flexDirection: "row",

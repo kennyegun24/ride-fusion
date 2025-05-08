@@ -1,8 +1,10 @@
 import { Feather } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, useLocalSearchParams } from "expo-router";
+import { RelativePathString, router, useLocalSearchParams } from "expo-router";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ThemedText } from "../ThemedText";
 
 export const HeaderImage = (params: any) => {
   // const params = useLocalSearchParams();
@@ -38,42 +40,58 @@ export const HeaderImage = (params: any) => {
   );
 };
 
-export const Header = (params: any) => {
+export const Header = ({ theme, ...params }: any) => {
   const { top } = useSafeAreaInsets();
   return (
-    <View
+    <BlurView
+      experimentalBlurMethod="dimezisBlurView"
+      tint={theme === "dark" ? "dark" : "extraLight"}
+      intensity={70}
       style={{
-        paddingTop: top + 8,
+        paddingTop: top + 16,
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
+        backgroundColor:
+          theme === "light" ? "rgba(226,226,226,0.7)" : "rgba(150,150,150,0.4)",
+        paddingBottom: 8,
+        // flex: 1,
+        height: "100%",
+        width: "100%",
       }}
     >
-      <HeaderLeft {...params} />
-    </View>
+      <HeaderLeft theme={theme} {...params} />
+    </BlurView>
   );
 };
 
-const HeaderLeft = (params: any) => {
+const HeaderLeft = ({ theme, ...params }: any) => {
   return (
     <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
       <Feather
         onPress={() => router.back()}
         name="chevron-left"
         size={24}
-        color="#fff"
+        color={theme === "dark" ? "#fff" : "#000"}
       />
       <Pressable
         style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
-        onPress={() => router.navigate("/(profile)")}
+        onPress={() =>
+          router.navigate({
+            pathname: "/(profile)" as RelativePathString,
+            params: {
+              uid: params.uid,
+            },
+          })
+        }
       >
         <Image
           source={{ uri: params.downloadURL }}
           style={{ width: 40, height: 40, borderRadius: 50 }}
         />
-        <Text style={{ fontSize: 20, fontWeight: 600, color: "#fff" }}>
+        <ThemedText style={{ fontSize: 20, fontWeight: 600 }}>
           {params.displayName}
-        </Text>
+        </ThemedText>
       </Pressable>
     </View>
   );

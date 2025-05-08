@@ -4,29 +4,34 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useColorScheme,
   View,
 } from "react-native";
 import React, { useState } from "react";
 import TextInput from "@/components/textInput";
+import { ThemedView } from "@/components/ThemedView";
 // import TextInput from "../textInput";
 
 const ChangePassword = ({}) => {
+  const theme = useColorScheme();
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
+    <ThemedView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View style={styles.mapContent}>
-          {details.map((e, _) => (
-            <TextInput data={e} key={_} />
-          ))}
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.mapContent}>
+            {details.map((e, _) => (
+              <TextInput theme={theme} data={e} key={_} />
+            ))}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ThemedView>
   );
 };
 
@@ -34,7 +39,6 @@ export default ChangePassword;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     flex: 1,
   },
   scrollView: {

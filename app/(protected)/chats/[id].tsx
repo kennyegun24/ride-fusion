@@ -1,231 +1,162 @@
+import { Chat, defaultTheme, MessageType } from "@flyerhq/react-native-chat-ui";
+import { useState, useLayoutEffect, useRef } from "react";
+import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
+  useColorScheme,
   View,
-  ActivityIndicator,
-  TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import ParallaxHeaderScrollView from "@/components/ParallaxHeaderScrollView";
-import { Header, HeaderImage } from "@/components/chats/ChatHeader";
-import ChatText from "@/components/chats/ChatText";
-import { formatChatDate, normalizeDate } from "@/helper/chat_time";
-import { useLocalSearchParams } from "expo-router";
+import { Header } from "@/components/chats/ChatHeader";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { getAuth } from "firebase/auth";
 import {
-  collection,
-  onSnapshot,
-  query,
-  limit,
-  orderBy,
-  startAfter,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import { Timestamp } from "firebase/firestore";
-import { db } from "@/firebase";
-import ChatInput from "@/components/chats/ChatInput";
-import useAuth from "@/hooks/userAuth";
+  handleSendMessage,
+  loadInitialMessages,
+  onPaginate,
+  realTimeListener,
+} from "@/helper/loadInitialMessages";
+import { messageProps, RenderBubble } from "@/components/chats/bubble";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { ThemedView } from "@/components/ThemedView";
 
-// Define the message type
-export interface Message {
-  id: string;
-  date: Timestamp;
-  senderId: string;
-  text: string;
+const DEFAULT_HEADER_HEIGHT = 80;
+interface ChatDetails {
+  uid: string;
+  [key: string]: any;
 }
 
-const MESSAGES_PER_PAGE = 20;
+const onHeaderLayout = (event: any, setHeaderHeight: any) => {
+  const { height } = event.nativeEvent.layout;
+  setHeaderHeight(height);
+};
 
 const ChatScreen = () => {
+  const [messages, setMessages] = useState<MessageType.Any[]>([]);
+  const currentUser = getAuth().currentUser;
+  const user = { id: (currentUser?.uid as string) || "" };
+  const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData>>();
+  const lastLoadedMessageIds = useRef<Set<string>>(new Set());
   const { id, details } = useLocalSearchParams();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const parseDetails = JSON.parse(details as string);
-  const { user } = useAuth();
+  const [headerHeight, setHeaderHeight] = useState(DEFAULT_HEADER_HEIGHT);
+  const theme = useColorScheme();
 
-  // Ensure parseDetails has the expected structure
-  interface ChatDetails {
-    uid: string;
-    [key: string]: any;
-  }
+  const handleSendPress = async (message: MessageType.PartialText) => {
+    const token = await currentUser?.getIdToken();
+    handleSendMessage({
+      message: message,
+      currentUser,
+      id: id as string,
+      chatDetails,
+      token: token,
+    });
+  };
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const parseDetails = JSON.parse(details as string);
 
   const chatDetails = parseDetails as ChatDetails;
 
-  // Initial fetch and real-time updates for new messages
-  useEffect(() => {
-    if (!id || Array.isArray(id)) return;
-
-    const chatsQuery = query(
-      collection(db, "chats", id, "messages"),
-      orderBy("date", "desc"),
-      limit(MESSAGES_PER_PAGE)
+  useLayoutEffect(() => {
+    loadInitialMessages(
+      id as string,
+      setMessages as React.Dispatch<React.SetStateAction<MessageType.Text[]>>,
+      setLastDoc as React.Dispatch<
+        React.SetStateAction<QueryDocumentSnapshot<DocumentData>>
+      >,
+      lastLoadedMessageIds.current
     );
 
-    const unsubscribe = onSnapshot(chatsQuery, (snapshot) => {
-      const newMessages: Message[] = [];
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        newMessages.push({
-          id: doc.id,
-          date: data.date as Timestamp,
-          senderId: data.senderId,
-          text: data.text,
-        });
-      });
-
-      // Sort messages to ensure newest at bottom
-      newMessages.sort((a, b) => a.date.toMillis() - b.date.toMillis());
-      setMessages(newMessages);
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null);
-      setHasMore(snapshot.docs.length === MESSAGES_PER_PAGE);
-    });
-
+    const unsubscribe = realTimeListener(
+      id as string,
+      setMessages as React.Dispatch<React.SetStateAction<MessageType.Text[]>>,
+      lastLoadedMessageIds.current
+    );
     return () => unsubscribe();
-  }, [id]);
-
-  // Load more messages
-  const loadMoreMessages = async () => {
-    if (!id || Array.isArray(id) || isLoading || !hasMore || !lastVisible)
-      return;
-
-    setIsLoading(true);
-    try {
-      const chatsQuery = query(
-        collection(db, "chats", id, "messages"),
-        orderBy("date", "desc"),
-        startAfter(lastVisible),
-        limit(MESSAGES_PER_PAGE)
-      );
-
-      const snapshot = await new Promise((resolve) => {
-        const unsubscribe = onSnapshot(chatsQuery, (snap) => {
-          resolve(snap);
-          unsubscribe();
-        });
-      });
-
-      const newMessages: Message[] = [];
-      (snapshot as any).forEach((doc: any) => {
-        const data = doc.data();
-        newMessages.push({
-          id: doc.id,
-          date: data.date as Timestamp,
-          senderId: data.senderId,
-          text: data.text,
-        });
-      });
-
-      newMessages.sort((a, b) => a.date.toMillis() - b.date.toMillis());
-      setMessages((prev) => [...newMessages, ...prev]);
-      setLastVisible(
-        (snapshot as any).docs[(snapshot as any).docs.length - 1] || null
-      );
-      setHasMore((snapshot as any).docs.length === MESSAGES_PER_PAGE);
-    } catch (error) {
-      console.error("Error loading more messages:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  }, []);
+  const onMoreMessages = async () => {
+    onPaginate(
+      id as string,
+      loadingMore,
+      lastDoc as QueryDocumentSnapshot<DocumentData>,
+      setLoadingMore,
+      setMessages as React.Dispatch<React.SetStateAction<MessageType.Text[]>>,
+      setLastDoc,
+      lastLoadedMessageIds.current
+    );
   };
-
-  // // Handle scroll to detect when user reaches the top
-  // const handleScroll = (event: any) => {
-  //   const { contentOffset } = event.nativeEvent;
-  //   if (contentOffset.y <= 50 && !isLoading && hasMore) {
-  //     loadMoreMessages();
-  //   }
-  // };
-
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.inner}>
-        <View style={styles.scrollArea}>
-          <ParallaxHeaderScrollView
-            headerImage={<HeaderImage {...chatDetails} />}
-            bottom={80}
-            headerBackgroundColor={{ light: "#fff", dark: "#1D3D47" }}
-            header={<Header {...chatDetails} />}
-          >
-            {hasMore && (
-              <TouchableOpacity
-                style={styles.loadMoreButton}
-                onPress={loadMoreMessages}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#888" />
-                ) : (
-                  <Text style={styles.loadMoreText}>Load More</Text>
-                )}
-              </TouchableOpacity>
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerBlurEffect: "dark",
+          headerStyle: { backgroundColor: "transparent" },
+          header: () => (
+            <View
+              onLayout={(e) => onHeaderLayout(e, setHeaderHeight)}
+              style={[styles.stackHeader]}
+            >
+              <Header theme={theme} {...chatDetails} />
+            </View>
+          ),
+        }}
+      />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "android" ? "height" : undefined}
+      >
+        <ThemedView style={{ flex: 1 }} lightColor="#fff" darkColor="#282828">
+          <Chat
+            theme={{
+              ...defaultTheme,
+              colors: {
+                ...defaultTheme.colors,
+                background: "inherit",
+                inputBackground: theme === "dark" ? "#fff" : "#282828",
+                inputText: theme === "dark" ? "#282828" : "#fff",
+                primary: "#282828",
+              },
+            }}
+            renderBubble={(e) => (
+              <RenderBubble
+                user={user}
+                message={e.message as messageProps}
+                nextMessageInGroup={e.nextMessageInGroup}
+              />
             )}
-            {messages.length < 1 ? (
-              <View style={{ height: 400 }}>
-                <Text style={{ margin: "auto", color: "#888" }}>
-                  No chat history
-                </Text>
-              </View>
-            ) : (
-              messages.map((e, i) => {
-                const normalizedDate = normalizeDate(e.date);
-                const currentDate = normalizedDate.toDateString();
-                const prevDate =
-                  i > 0
-                    ? normalizeDate(messages[i - 1].date).toDateString()
-                    : null;
-
-                const isNewDay = currentDate !== prevDate;
-                return (
-                  <React.Fragment key={e.id}>
-                    {isNewDay && (
-                      <View
-                        style={{ alignItems: "center", marginVertical: 10 }}
-                      >
-                        <Text style={{ color: "#888", fontSize: 12 }}>
-                          {formatChatDate(normalizedDate)}
-                        </Text>
-                      </View>
-                    )}
-                    <ChatText myId={user?.uid} {...e} />
-                  </React.Fragment>
-                );
-              })
-            )}
-          </ParallaxHeaderScrollView>
-        </View>
-        <ChatInput receiverUid={chatDetails.uid} chatId={id as string} />
-      </View>
-    </KeyboardAvoidingView>
+            messages={messages}
+            onSendPress={handleSendPress}
+            user={user}
+            onEndReached={onMoreMessages}
+            inputProps={{}}
+            textInputProps={{
+              placeholderTextColor: theme === "dark" ? "#818181" : "#a1a1a1",
+            }}
+            flatListProps={{
+              contentOffset: { y: -headerHeight, x: 0 },
+              contentInset: { bottom: headerHeight },
+              ListFooterComponent:
+                Platform.OS === "android" ? (
+                  <View
+                    style={{
+                      height: headerHeight,
+                    }}
+                  />
+                ) : null,
+            }}
+          />
+        </ThemedView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
 export default ChatScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    flex: 1,
-  },
-  scrollArea: {
-    flex: 1,
-  },
-  loadMoreButton: {
-    alignItems: "center",
-    padding: 10,
-    marginVertical: 10,
-  },
-  loadMoreText: {
-    color: "#007AFF",
-    fontSize: 16,
+  stackHeader: {
+    // paddingBottom: 12,
   },
 });

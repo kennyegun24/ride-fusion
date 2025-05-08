@@ -1,15 +1,21 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import React from "react";
 import { Image } from "react-native";
 import { MotiView } from "moti";
+import { ThemedView } from "../ThemedView";
 
 const Splash = () => {
+  const theme = useColorScheme();
   return (
-    <View style={{ height: "100%" }}>
+    <ThemedView style={{ height: "100%", flex: 1 }}>
       <View style={{ margin: "auto" }}>
         <Image
           style={{ width: 200, height: 100 }}
-          source={require("@assets/images/splash-icon-light.png")}
+          source={
+            theme === "dark"
+              ? require("@assets/images/icons/splash-icon-dark.png")
+              : require("@assets/images/icons/splash-icon-light.png")
+          }
         />
         <View style={{ flexDirection: "row", gap: 1, margin: "auto" }}>
           {[0, 1, 2].map((index) => (
@@ -35,7 +41,7 @@ const Splash = () => {
           ))}
         </View>
       </View>
-    </View>
+    </ThemedView>
   );
 };
 

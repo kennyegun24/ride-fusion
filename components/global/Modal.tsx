@@ -1,6 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
 import Modal from "react-native-modal";
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
 
 interface modalProps {
   isModalVisible: boolean;
@@ -8,6 +10,7 @@ interface modalProps {
   closeModal: () => void;
   rightButtonText: string;
   rightClick: () => void;
+  leftButtonText: string;
   leftClick?: () => void;
 }
 const ModalComponent: FC<modalProps> = ({
@@ -16,20 +19,20 @@ const ModalComponent: FC<modalProps> = ({
   rightButtonText,
   rightClick,
   title,
+  leftButtonText,
   leftClick,
 }) => {
   return (
     <Modal isVisible={isModalVisible} style={{ height: 300, zIndex: 9 }}>
-      <View
+      <ThemedView
         style={{
           minHeight: 200,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "white",
           borderRadius: 10,
         }}
       >
-        <Text
+        <ThemedText
           style={{
             fontSize: 20,
             textAlign: "center",
@@ -38,7 +41,7 @@ const ModalComponent: FC<modalProps> = ({
           }}
         >
           {title}
-        </Text>
+        </ThemedText>
 
         <View style={{ marginTop: 18, flexDirection: "row", gap: 8 }}>
           <Pressable
@@ -58,7 +61,7 @@ const ModalComponent: FC<modalProps> = ({
                 textAlign: "center",
               }}
             >
-              No
+              {leftButtonText}
             </Text>
           </Pressable>
           <Pressable
@@ -82,7 +85,7 @@ const ModalComponent: FC<modalProps> = ({
             </Text>
           </Pressable>
         </View>
-      </View>
+      </ThemedView>
     </Modal>
   );
 };

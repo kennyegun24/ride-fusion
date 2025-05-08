@@ -1,33 +1,36 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import DynamicStarRating from "../Stars";
-import { FontAwesome6, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { ThemedText } from "../ThemedText";
 
-const ProfileOverview = () => {
+const ProfileOverview = ({ ratings, reviews, state, city }: any) => {
   return (
     <View>
-      <Text style={styles.overviewHeader}>Overview</Text>
+      <ThemedText style={styles.overviewHeader}>Overview</ThemedText>
 
       <View style={styles.overviewRatingTextContainer}>
-        <Text style={styles.overviewText}>4.9</Text>
-        <DynamicStarRating fullColor="#F29D38" rating={4.7} size={14} />
-        <Text style={styles.overviewText}>23 Reviews</Text>
+        <ThemedText>{ratings}</ThemedText>
+        <DynamicStarRating fullColor="#F29D38" rating={ratings} size={14} />
+        <ThemedText>{reviews} Reviews</ThemedText>
       </View>
-      <View style={styles.overviewTextView}>
+      {/* <View style={styles.overviewTextView}>
         <Ionicons name="trophy-outline" size={18} color="#8B8B8B" />
-        <Text style={styles.overviewText}>143 Cars Rented Out</Text>
-      </View>
+        <ThemedText >143 Cars Rented Out</ThemedText>
+      </View> */}
       <View style={styles.overviewTextView}>
         <MaterialIcons name="person-pin-circle" size={18} color="#8B8B8B" />
-        <Text style={styles.overviewText}>Ikeja, Lagos</Text>
+        <ThemedText>
+          {city}, {state}
+        </ThemedText>
       </View>
       <View style={styles.overviewTextView}>
         <FontAwesome6 name="user-shield" size={18} color="#8B8B8B" />
-        <Text style={styles.overviewText}>Verified</Text>
+        <ThemedText>Verified</ThemedText>
       </View>
       <View style={styles.overviewTextView}>
         <FontAwesome6 name="clock-four" size={18} color="#8B8B8B" />
-        <Text style={styles.overviewText}>Member Since 2023</Text>
+        <ThemedText>Member Since 2023</ThemedText>
       </View>
     </View>
   );
@@ -44,5 +47,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-  overviewText: { color: "#8B8B8B" },
+  // overviewText: { color: "#8B8B8B" },
 });

@@ -4,8 +4,10 @@ import {
   TextInput as ReactNativeTextInput,
   View,
   TextInputProps,
+  ColorSchemeName,
 } from "react-native";
 import React, { FC } from "react";
+import { ThemedText } from "./ThemedText";
 
 type inputProps = {
   data: {
@@ -13,15 +15,21 @@ type inputProps = {
     name?: string;
     placeholder: string;
   };
+  theme?: ColorSchemeName;
 } & TextInputProps;
-const TextInput: FC<inputProps> = ({ data, ...props }) => {
+const TextInput: FC<inputProps> = ({ data, theme, ...props }) => {
   return (
     <View>
-      <Text style={styles.labelStyle}>{data?.label}</Text>
+      <ThemedText lightColor="#4B524E" style={styles.labelStyle}>
+        {data?.label}
+      </ThemedText>
       <ReactNativeTextInput
         onChangeText={(e) => {}}
         placeholder={data?.placeholder}
-        style={styles.textInput}
+        style={[
+          styles.textInput,
+          { color: theme === "light" ? "#000" : "#fff" },
+        ]}
         {...props}
       />
     </View>
@@ -41,5 +49,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#171C2208",
   },
   scroll: { paddingVertical: 24 },
-  labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 15 },
+  labelStyle: { fontWeight: 600, fontSize: 15 },
 });

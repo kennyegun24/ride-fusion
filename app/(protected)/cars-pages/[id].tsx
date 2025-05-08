@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { Octicons } from "@expo/vector-icons";
 import Pager from "@/components/home/details/Pager";
@@ -15,6 +15,8 @@ import AdditionalFields, {
   OwnerDetails,
 } from "@/components/home/details/AdditionalFields";
 import useAuth from "@/hooks/userAuth";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 const CarDetail = () => {
   const { id } = useLocalSearchParams();
@@ -23,9 +25,12 @@ const CarDetail = () => {
   if (loading) return <CarDetailsLoader />;
   const car = carDetails.car;
   const reviews = carDetails.reviews;
+  const ratings = carDetails.averageRating;
   const carOwner = carDetails?.car?.user;
+  const hasMoreReviews = carDetails?.hasMoreReviews;
+  const chatExist = carDetails.chatExist;
   return (
-    <View style={{ flex: 1 }}>
+    <ThemedView style={{ flex: 1 }}>
       <StatusBar style="auto" hidden={false} />
       <ParallaxScrollView
         bottom={0}
@@ -34,14 +39,16 @@ const CarDetail = () => {
       >
         <View style={{ paddingTop: 12 }}>
           <View style={styles.topContainer}>
-            <Text style={styles.carName}>
+            <ThemedText style={styles.carName}>
               {car.car_name} {car.model}
-            </Text>
+            </ThemedText>
             <Text style={styles.btnText}>Available Now</Text>
           </View>
           <View style={styles.location}>
             <Octicons name="location" size={16} color="#8B8B8B" />
-            <Text style={styles.locationText}>Ikeja, Lagos</Text>
+            <ThemedText darkColor="#f4f4f4" style={styles.locationText}>
+              Ikeja, Lagos
+            </ThemedText>
           </View>
 
           <AdditionalFields
@@ -49,29 +56,59 @@ const CarDetail = () => {
             model={car.model}
             rentalTerms={car.rentalTerms}
           />
-          <Text style={styles.descText}>{car.description}</Text>
+          <ThemedText darkColor="#f4f4f4" style={styles.descText}>
+            {car.description}
+          </ThemedText>
           <CaFeatures details={car.features || {}} />
           <OwnerDetails
             downloadURL={carOwner.downloadURL}
             fullName={carOwner.fullName}
-            rating={car.rating}
+            rating={ratings}
+            uid={carOwner.uid}
             reviewsLength={reviews?.length}
           />
           <View style={styles.usersRatingsContainer}>
             {reviews?.length <= 0 ? (
               <NoReview />
             ) : (
-              reviews?.map((e, _) => <Review key={_} data={e} />)
+              <View>
+                {reviews?.map((e, _) => (
+                  <Review key={_} data={e} />
+                ))}
+                {hasMoreReviews && (
+                  <Pressable
+                    style={{ padding: 6 }}
+                    onPress={() =>
+                      router.navigate({
+                        pathname: "/(protected)/allReviews",
+                        params: {
+                          id: id,
+                          type: "car",
+                        },
+                      })
+                    }
+                  >
+                    <ThemedText
+                      darkColor="#f4f4f4"
+                      style={{ textAlign: "center" }}
+                    >
+                      See more reviews
+                    </ThemedText>
+                  </Pressable>
+                )}
+              </View>
             )}
           </View>
         </View>
       </ParallaxScrollView>
-      <BottomView
-        showChat={user?.uid !== carOwner.uid}
-        userId={carOwner._id}
-        rentalPricePerDay={car.rentalPricePerDay}
-      />
-    </View>
+      {!chatExist && user?.uid !== carOwner.uid && (
+        <BottomView
+          showRight={user?.uid !== carOwner.uid}
+          userId={carOwner._id}
+          rentalPricePerDay={car.rentalPricePerDay}
+        />
+      )}
+    </ThemedView>
   );
 };
 
@@ -83,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  carName: { fontSize: 18, fontWeight: 600, color: "#414141" },
+  carName: { fontSize: 18, fontWeight: 600 },
   btnText: {
     fontSize: 13,
     color: "#269355",
@@ -100,8 +137,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 12,
   },
-  locationText: { color: "#8B8B8B", fontSize: 14 },
-  descText: { color: "#8B8B8B", fontSize: 14, lineHeight: 24 },
+  locationText: { fontSize: 14 },
+  descText: { fontSize: 14, lineHeight: 24 },
   myStarStyle: {
     color: "yellow",
     backgroundColor: "transparent",
@@ -118,3 +155,18 @@ const styles = StyleSheet.create({
     gap: 16,
   },
 });
+
+// const Page = () => {
+//   return (
+//     <View>
+//       <Text>
+//         This is lorem Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+//         Nemo rerum sapiente non! Deserunt dolorem vel voluptates et suscipit,
+//         reprehenderit quasi dignissimos eos optio pariatur, atque itaque enim
+//         voluptatem excepturi ullam!
+//       </Text>
+//     </View>
+//   );
+// };
+
+// export default Page;

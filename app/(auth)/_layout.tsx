@@ -1,11 +1,10 @@
-import { auth } from "@/firebase";
+import { ThemedView } from "@/components/ThemedView";
 import { usePreventBack } from "@/hooks/usePreventBack";
 import { useRegistrationState } from "@/hooks/useRegisterationState";
 import { router, Stack, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { getAuth } from "firebase/auth";
 import { useCallback, useEffect } from "react";
-import { View } from "react-native";
 
 export default function RootLayout() {
   const registrationComplete = useRegistrationState(
@@ -27,7 +26,7 @@ export default function RootLayout() {
   );
   return (
     // <SafeAreaProvider style={{ backgroundColor: "white", flex: 1 }}>
-    <View style={{ flex: 1, backgroundColor: "purple" }}>
+    <ThemedView style={{ flex: 1 }}>
       <Stack
         screenOptions={{
           headerStyle: {
@@ -64,7 +63,7 @@ export default function RootLayout() {
         />
       </Stack>
       <StatusBar style="auto" />
-    </View>
+    </ThemedView>
     // {/* </GestureHandlerRootView> */}
     // </SafeAreaProvider>
   );

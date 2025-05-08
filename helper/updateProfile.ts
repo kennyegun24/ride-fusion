@@ -1,6 +1,7 @@
 import { doc, updateDoc } from "firebase/firestore";
 import axios from "axios";
 import { db } from "@/firebase";
+import { API_ROUTE } from "@/utils/apiRoute";
 
 interface UpdateUserProfileParams {
   userId: string;
@@ -38,7 +39,7 @@ export const updateUserProfile = async ({
 
     // Server update
     await axios.patch(
-      `http://172.20.10.3:4000/api/${serverUrl}`,
+      `${API_ROUTE}${serverUrl}`,
       { updates: cleanedData },
       {
         headers: {

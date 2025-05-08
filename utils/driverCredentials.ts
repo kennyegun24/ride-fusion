@@ -45,6 +45,18 @@ export const driverCredentials = [
     placeholder: "Enter your residential address",
     required: true,
   },
+  {
+    key: "city",
+    label: "City",
+    placeholder: "Enter your city of residence",
+    required: true,
+  },
+  {
+    key: "state",
+    label: "State",
+    placeholder: "Enter your state of residence",
+    required: true,
+  },
   // {
   //   key: "proofOfAddress",
   //   label: "Proof of Address",

@@ -29,6 +29,12 @@ export const driverSchema = z
     address: z.string().min(5, {
       message: "Address is required",
     }),
+    city: z.string().min(5, {
+      message: "City is required",
+    }),
+    state: z.string().min(5, {
+      message: "State is required",
+    }),
     // proofOfAddress: z.string().min(3, {
     //   message: "Proof of address is required",
     // }),
@@ -85,6 +91,12 @@ export const ownerSchema = z
       .min(8, { message: "Please confirm your password" }),
     address: z.string().min(5, {
       message: "Address is required",
+    }),
+    city: z.string().min(5, {
+      message: "City is required",
+    }),
+    state: z.string().min(5, {
+      message: "State is required",
     }),
     // proofOfOwnership: z
     //   .string()

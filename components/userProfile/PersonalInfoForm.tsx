@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import React from "react";
 import TextInput from "../textInput";
 
@@ -18,6 +18,7 @@ interface formValues {
 }
 
 const PersonalInfoForm = ({ values, setValues }: formValues) => {
+  const theme = useColorScheme();
   return (
     <View style={styles.container}>
       {details.map((e, _) => (
@@ -30,6 +31,7 @@ const PersonalInfoForm = ({ values, setValues }: formValues) => {
             setValues((prev) => ({ ...prev, [e.name]: text }))
           }
           keyboardType={e.name === "phone" ? "phone-pad" : "default"}
+          theme={theme}
         />
       ))}
     </View>

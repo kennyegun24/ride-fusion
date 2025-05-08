@@ -92,7 +92,7 @@ const index = () => {
   };
   const login = async () => {
     await AsyncStorage.setItem("ride-fusion-onboarding-screen", "true");
-    router.push("/(auth)/login");
+    router.push("/(auth)");
   };
   if (isChecking.checking || isChecking.onboarding) {
     return <Splash />;

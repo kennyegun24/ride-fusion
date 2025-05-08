@@ -17,6 +17,7 @@ import { AuthProvider, useAuthenticate } from "@/providers/AuthProvider";
 import { RequestProvider } from "@/providers/RequestProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import { ChatProvider } from "@/providers/AllChatsProvider";
+import { ThemedView } from "@/components/ThemedView";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -43,7 +44,7 @@ export default function RootLayout() {
         <RequestProvider>
           <RoleProvider>
             <AuthProvider>
-              <View style={{ flex: 1 }}>
+              <ThemedView style={{ flex: 1 }}>
                 <Stack
                   screenOptions={{
                     gestureEnabled: true,
@@ -78,7 +79,7 @@ export default function RootLayout() {
                   <Stack.Screen name="+not-found" />
                 </Stack>
                 <StatusBar style={"auto"} hidden={false} />
-              </View>
+              </ThemedView>
             </AuthProvider>
           </RoleProvider>
         </RequestProvider>

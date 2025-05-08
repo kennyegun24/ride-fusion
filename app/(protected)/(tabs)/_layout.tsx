@@ -1,3 +1,4 @@
+import { ThemedView } from "@/components/ThemedView";
 import { usePreventBack } from "@/hooks/usePreventBack";
 import useAuth from "@/hooks/userAuth";
 import {
@@ -9,18 +10,22 @@ import {
 } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 
 export default function RootLayout() {
   usePreventBack();
   const { userDetails, loading } = useAuth();
-
+  const theme = useColorScheme();
   return (
-    <View style={{ flex: 1, backgroundColor: "purple" }}>
+    <ThemedView style={{ flex: 1 }} darkColor="#2F2F2F">
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: "#269355",
           tabBarInactiveTintColor: "#8B8B8B",
+          tabBarStyle: {
+            borderTopColor: theme === "dark" ? "#E0E0E040" : "#fff",
+          },
+          tabBarBackground: () => <View></View>,
         }}
       >
         <Tabs.Screen
@@ -37,38 +42,51 @@ export default function RootLayout() {
             ),
           }}
         />
-        {userDetails?.role === "owner" ? (
-          <Tabs.Screen
-            name="list-car"
-            options={{
-              headerShown: false,
-              title: "List Car",
-              tabBarIcon: ({ color }) => (
-                <FontAwesome name="car" size={24} color={color} />
-              ),
-            }}
-          />
-        ) : (
-          <Tabs.Screen
-            name="cars"
-            options={{
-              title: "Cars",
-              tabBarIcon: ({ color }) => (
-                <FontAwesome name="car" size={24} color={color} />
-              ),
-            }}
-          />
-        )}
+
+        {/* Conditionally show List Car or Cars */}
+        {/* {userDetails?.role === "owner" ? ( */}
+        <Tabs.Screen
+          name="list-car"
+          options={{
+            headerShown: false,
+            href:
+              userDetails?.role === "owner"
+                ? "/(protected)/(tabs)/list-car"
+                : null,
+            title: "List Car",
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name="car" size={24} color={color} />
+            ),
+          }}
+        />
+        {/* ) : ( */}
+        <Tabs.Screen
+          name="cars"
+          options={{
+            title: "Cars",
+            href: userDetails?.role === "owner" ? null : null,
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name="car" size={24} color={color} />
+            ),
+          }}
+        />
+        {/* )} */}
+        {/* {userDetails?.role === "owner" && ( */}
         <Tabs.Screen
           name="(history)"
           options={{
             headerShown: false,
+            href:
+              userDetails?.role === "owner"
+                ? "/(protected)/(tabs)/(history)"
+                : null,
             title: "History",
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name="receipt" size={24} color={color} />
             ),
           }}
         />
+        {/* )} */}
         <Tabs.Screen
           name="(chats)"
           options={{
@@ -97,7 +115,7 @@ export default function RootLayout() {
             ),
           }}
         />
-        {userDetails?.role !== "owner" ? (
+        {/* {userDetails?.role !== "owner" ? (
           <Tabs.Screen
             name="list-car"
             options={{
@@ -112,8 +130,16 @@ export default function RootLayout() {
             }}
           />
         )}
+        {userDetails?.role !== "owner" && (
+          <Tabs.Screen
+            name="(history)"
+            options={{
+              href: null,
+            }}
+          />
+        )} */}
       </Tabs>
       <StatusBar style="auto" hidden={false} />
-    </View>
+    </ThemedView>
   );
 }

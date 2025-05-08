@@ -13,6 +13,8 @@ import axios from "axios";
 import useAuth from "@/hooks/userAuth";
 import { ScrollView } from "moti";
 import ModalComponent from "@/components/global/Modal";
+import { ThemedView } from "@/components/ThemedView";
+import { API_ROUTE } from "@/utils/apiRoute";
 
 type requestProps = {
   sender: {
@@ -36,14 +38,11 @@ const Requests = () => {
       const makeRequest = async () => {
         const token = await user?.getIdToken();
         try {
-          const req = await axios.get(
-            "http://172.20.10.3:4000/api/chat/all-requests",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const req = await axios.get(`${API_ROUTE}chat/all-requests`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           setRequests(req.data?.requests);
         } catch (error) {
           console.log(error);
@@ -58,7 +57,7 @@ const Requests = () => {
     try {
       const token = await user?.getIdToken();
       const req = await axios.post(
-        "http://172.20.10.3:4000/api/chat/accept-request",
+        `${API_ROUTE}chat/accept-request`,
         { requestId: e },
         {
           headers: {
@@ -78,7 +77,7 @@ const Requests = () => {
 
   // console.log(JSON.stringify(requests, null, 2));
   return (
-    <View>
+    <ThemedView>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scrollView}
@@ -97,6 +96,7 @@ const Requests = () => {
                 rightClick={() => acceptRequest(e._id)}
                 closeModal={() => setIsModalVisible(false)}
                 leftClick={rejectRequest}
+                leftButtonText="Cancel"
               />
 
               <View style={styles.chatCardContainer}>
@@ -115,14 +115,14 @@ const Requests = () => {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </ThemedView>
   );
 };
 
 export default Requests;
 
 const styles = StyleSheet.create({
-  scrollView: { paddingVertical: 12, backgroundColor: "#fff" },
+  scrollView: { paddingVertical: 12 },
   chatContainer: {},
   chatCardContainer: {
     flexDirection: "row",

@@ -3,35 +3,40 @@ import React from "react";
 
 const support = () => {
   return (
-    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-      <View>
-        {contactItems.map((item) => (
-          <View
-            key={item.action}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 12,
-              paddingVertical: 24,
-              justifyContent: "space-between",
-              borderBottomColor: "#E9E9E9",
-              borderBottomWidth: 1,
-            }}
-          >
+    <ThemedView style={{ flex: 1 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          {contactItems.map((item) => (
             <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+              key={item.action}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 12,
+                paddingVertical: 24,
+                justifyContent: "space-between",
+                borderBottomColor: "#E9E9E9",
+                borderBottomWidth: 1,
+              }}
             >
-              {item.icon({ size: 24, color: "#333" })}
-              <View style={{ marginLeft: 12 }}>
-                <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
-                <Text style={{ color: "#888" }}>{item.description}</Text>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+              >
+                {item.icon({ size: 24, color: "#333" })}
+                <View style={{ marginLeft: 12 }}>
+                  <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
+                  <Text style={{ color: "#888" }}>{item.description}</Text>
+                </View>
               </View>
+              <MaterialIcons name="chevron-right" size={24} color="#414141" />
             </View>
-            <MaterialIcons name="chevron-right" size={24} color="#414141" />
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+          ))}
+        </View>
+      </ScrollView>
+    </ThemedView>
   );
 };
 
@@ -40,7 +45,6 @@ export default support;
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: "#fff",
     paddingTop: 24,
     paddingHorizontal: 12,
   },
@@ -55,6 +59,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { ReactElement } from "react";
+import { ThemedView } from "@/components/ThemedView";
 
 type IconProps = { size: number; color: string };
 

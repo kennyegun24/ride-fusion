@@ -1,5 +1,12 @@
 import { FC } from "react";
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import {
+  ColorSchemeName,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import { ThemedText } from "../ThemedText";
 
 interface AccountTypeData {
   type: string;
@@ -12,12 +19,14 @@ interface accountTypeProps {
   setAccountType: React.Dispatch<React.SetStateAction<string>>;
   accountType: string;
   data: AccountTypeData;
+  theme: ColorSchemeName;
 }
 
 export const AccountType: FC<accountTypeProps> = ({
   accountType,
   data,
   setAccountType,
+  theme,
 }) => {
   return (
     <TouchableWithoutFeedback
@@ -28,20 +37,42 @@ export const AccountType: FC<accountTypeProps> = ({
         style={[
           styles.accountMap,
           {
-            borderColor: data.type === accountType ? "#269355" : "#E9E9E9",
+            borderColor: data.type === accountType ? "#269355" : "#a1a1a1",
             backgroundColor:
-              data.type === accountType ? "#2693550D" : "#E9E9E9",
+              data.type === accountType
+                ? "#2693550D"
+                : theme === "dark"
+                ? "#1a1a1a"
+                : "#E9E9E9",
           },
         ]}
       >
         {data.icon}
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 17, fontWeight: 600, color: "#414141" }}>
+          <ThemedText
+            darkColor="#d0d0d0"
+            lightColor="#414141"
+            style={{
+              fontSize: 17,
+              lineHeight: 20,
+              fontWeight: 600,
+              // color: "#414141",
+            }}
+          >
             {data.title}
-          </Text>
-          <Text style={{ fontSize: 14, color: "#7F7F7F", marginTop: 4 }}>
+          </ThemedText>
+          <ThemedText
+            darkColor="#a1a1a1"
+            lightColor="#7F7F7F"
+            style={{
+              fontSize: 14,
+              lineHeight: 20,
+              // color: "#7F7F7F",
+              marginTop: 4,
+            }}
+          >
             {data.desc}
-          </Text>
+          </ThemedText>
         </View>
       </View>
     </TouchableWithoutFeedback>

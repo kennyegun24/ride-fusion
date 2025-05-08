@@ -1,4 +1,5 @@
 import {
+  ColorSchemeName,
   Dimensions,
   Image,
   Pressable,
@@ -15,9 +16,10 @@ interface props {
   action: string;
   closeModal: () => void;
   signOut: () => void;
+  theme: ColorSchemeName;
 }
 
-const AccountActionsModal = ({ action, closeModal, signOut }: props) => {
+const AccountActionsModal = ({ action, closeModal, signOut, theme }: props) => {
   return (
     <BlurModal closeModal={closeModal}>
       {action === "signOut" ? (

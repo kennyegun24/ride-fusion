@@ -1,7 +1,14 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { FC } from "react";
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  useColorScheme,
+  View,
+} from "react-native";
+import { ThemedText } from "../ThemedText";
 
 interface HeaderProps {
   header: string;
@@ -9,6 +16,7 @@ interface HeaderProps {
 }
 
 export const Header: FC<HeaderProps> = ({ header, subHeader }) => {
+  const theme = useColorScheme();
   return (
     <View style={{ paddingBottom: 12 }}>
       <TouchableWithoutFeedback
@@ -16,12 +24,30 @@ export const Header: FC<HeaderProps> = ({ header, subHeader }) => {
         onPress={() => router.back()}
       >
         <View style={styles.backView}>
-          <FontAwesome name="chevron-left" size={20} color={"#414141"} />
-          <Text style={styles.backText}>Back</Text>
+          <FontAwesome
+            name="chevron-left"
+            size={20}
+            color={theme === "light" ? "#414141" : "#d9d9d9"}
+          />
+          <ThemedText lightColor="#414141" style={styles.backText}>
+            Back
+          </ThemedText>
         </View>
       </TouchableWithoutFeedback>
-      <Text style={styles.headerText}>{header}</Text>
-      <Text style={styles.subHeaderText}>{subHeader}</Text>
+      <ThemedText
+        lightColor="#414141"
+        darkColor="#d9d9d9"
+        style={styles.headerText}
+      >
+        {header}
+      </ThemedText>
+      <ThemedText
+        lightColor="#7F7F7F"
+        darkColor="#a1a1a1"
+        style={styles.subHeaderText}
+      >
+        {subHeader}
+      </ThemedText>
     </View>
   );
 };
@@ -31,13 +57,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   backView: { flexDirection: "row", alignItems: "center", gap: 4 },
-  backText: { fontSize: 16, color: "#414141" },
+  backText: { fontSize: 16 },
   headerText: {
     fontSize: 20,
     fontWeight: 600,
     marginTop: 16,
     marginBottom: 6,
-    color: "#414141",
+    // color: "#414141",
   },
-  subHeaderText: { fontSize: 15, color: "#7F7F7F" },
+  subHeaderText: { fontSize: 15 },
 });

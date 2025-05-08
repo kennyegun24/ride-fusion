@@ -9,6 +9,7 @@ import { updateProfile } from "firebase/auth";
 import { uploadImages } from "@/utils/uploadToCloudinary";
 import { updateUserProfile } from "@/helper/updateProfile";
 import { useRequest } from "@/providers/RequestProvider";
+import { ThemedText } from "../ThemedText";
 
 export const HeaderImage = ({ minHeight = 0 }) => {
   const { user } = useAuth();
@@ -77,14 +78,22 @@ export const HeaderImage = ({ minHeight = 0 }) => {
         <Feather name="edit" size={24} color="black" style={styles.editIcon} />
       </Pressable>
       <View style={{ marginTop: 12 }}>
-        <Text style={styles.name}>{user?.displayName}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
+        <ThemedText lightColor="#414141" style={styles.name}>
+          {user?.displayName}
+        </ThemedText>
+        <ThemedText
+          lightColor="#8B8B8B"
+          darkColor="#a1a1a1"
+          style={styles.email}
+        >
+          {user?.email}
+        </ThemedText>
       </View>
     </View>
   );
 };
 
-export default function ProfileHeader() {
+export default function ProfileHeader({ params }: any) {
   const { top } = useSafeAreaInsets();
   return (
     <View
@@ -95,12 +104,12 @@ export default function ProfileHeader() {
         },
       ]}
     >
-      <HeaderLeft />
+      <HeaderLeft params={params} />
     </View>
   );
 }
 
-const HeaderLeft = () => {
+const HeaderLeft = ({ params }: any) => {
   return (
     <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
       <Feather
@@ -111,18 +120,22 @@ const HeaderLeft = () => {
       />
       <Pressable
         style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
-        onPress={() => router.navigate("/(profile)")}
+        onPress={() => router.navigate("/(protected)/(profile)")}
       >
         <Image
-          source={require("@/assets/images/kenny.png")}
+          source={
+            params?.downloadURL
+              ? { uri: params.downloadURL }
+              : require("@/assets/images/no_image.png")
+          }
           style={{ width: 40, height: 40, borderRadius: 50 }}
         />
         <View>
           <Text style={{ fontSize: 20, fontWeight: 600, color: "#fff" }}>
-            Kenny Elias
+            {params.fullName}
           </Text>
           <Text style={{ fontSize: 14, fontWeight: 600, color: "#f4f4f4" }}>
-            Ayubafemolajbshbsje20@gmail.com
+            {params.email}
           </Text>
         </View>
       </Pressable>
@@ -153,13 +166,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 600,
     textAlign: "center",
-    color: "#414141",
+    // color: "#414141",
   },
   email: {
     fontSize: 14,
     fontWeight: 600,
     textAlign: "center",
-    color: "#8B8B8B",
+    // color: "#8B8B8B",
   },
   profileHeader: {
     flexDirection: "row",

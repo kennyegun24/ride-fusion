@@ -1,19 +1,22 @@
+import { ThemedText } from "@/components/ThemedText";
 import { AntDesign, EvilIcons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, useColorScheme, View } from "react-native";
 
 export default function RootLayout() {
+  const theme = useColorScheme();
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#f4511e",
+          // backgroundColor: "#f4511e",
         },
         headerTintColor: "#fff",
         headerTitleStyle: {
           fontWeight: "bold",
         },
+        headerTitle: "",
       }}
       // initialRouteName="index"
     >
@@ -21,7 +24,9 @@ export default function RootLayout() {
         name="index"
         options={{
           headerShown: false,
-          headerStyle: { backgroundColor: "#fff" },
+          headerStyle: {
+            backgroundColor: theme === "light" ? "#fff" : "#282828",
+          },
           animation: "slide_from_right",
           headerLeft: () => (
             <EvilIcons
@@ -36,7 +41,9 @@ export default function RootLayout() {
         name="change-password"
         options={{
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: "#fff" },
+          headerStyle: {
+            backgroundColor: theme === "light" ? "#fff" : "#282828",
+          },
           animation: "slide_from_right",
           headerLeft: () => (
             <Pressable
@@ -47,10 +54,14 @@ export default function RootLayout() {
               }}
               onPress={() => router.back()}
             >
-              <EvilIcons name="chevron-left" size={42} />
-              <Text style={{ fontWeight: 500, fontSize: 16 }}>
+              <EvilIcons
+                color={theme === "light" ? "#000" : "#fff"}
+                name="chevron-left"
+                size={24}
+              />
+              <ThemedText style={{ fontWeight: 500, fontSize: 16 }}>
                 Change Password
-              </Text>
+              </ThemedText>
             </Pressable>
           ),
         }}
@@ -59,7 +70,9 @@ export default function RootLayout() {
         name="support"
         options={{
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: "#fff" },
+          headerStyle: {
+            backgroundColor: theme === "light" ? "#fff" : "#282828",
+          },
           animation: "slide_from_right",
           headerLeft: () => (
             <Pressable
@@ -70,8 +83,14 @@ export default function RootLayout() {
               }}
               onPress={() => router.back()}
             >
-              <EvilIcons name="chevron-left" size={42} />
-              <Text style={{ fontWeight: 500, fontSize: 16 }}>Support</Text>
+              <EvilIcons
+                color={theme === "light" ? "#000" : "#fff"}
+                name="chevron-left"
+                size={24}
+              />
+              <ThemedText style={{ fontWeight: 500, fontSize: 16 }}>
+                Support
+              </ThemedText>
             </Pressable>
           ),
         }}

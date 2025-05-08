@@ -36,4 +36,8 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
-firebase.ts
+# firebase.ts
+# .env
+config/
+android
+.env

@@ -2,24 +2,27 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
 import DynamicStarRating from "@/components/Stars";
 import { CarObjProps } from "@/types/carTypes";
+import { date_formatter } from "@/utils/formatter.helper";
 
-interface ReviewProps {
+export interface ReviewProps {
   data: {
-    reviewer_name: string;
-    review: number;
-    review_date: string;
-    review_text: string;
+    comment: string;
+    createdAt: string;
+    rating: number;
+    user: {
+      fullName: string;
+    };
   };
 }
 const Review: FC<ReviewProps> = ({ data }) => {
   return (
     <View style={styles.usersRating}>
-      <Text style={styles.userRatingName}>{data.reviewer_name}</Text>
+      <Text style={styles.userRatingName}>{data.user.fullName}</Text>
       <View style={styles.userRatingViewContainer}>
-        <DynamicStarRating rating={data.review} fullColor="#D9B100" size={14} />
-        <Text style={styles.ratingDate}>{data.review_date}</Text>
+        <DynamicStarRating rating={data.rating} fullColor="#D9B100" size={14} />
+        <Text style={styles.ratingDate}>{date_formatter(data.createdAt)}</Text>
       </View>
-      <Text style={styles.ratingDesc}>{data.review_text}</Text>
+      <Text style={styles.ratingDesc}>{data.comment}</Text>
     </View>
   );
 };

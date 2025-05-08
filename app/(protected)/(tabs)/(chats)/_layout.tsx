@@ -1,77 +1,62 @@
-import {
-  createMaterialTopTabNavigator,
-  MaterialTopTabNavigationEventMap,
-  MaterialTopTabNavigationOptions,
-} from "@react-navigation/material-top-tabs";
-import { ParamListBase, TabNavigationState } from "@react-navigation/native";
-import { withLayoutContext } from "expo-router";
-import { Searchbar } from "react-native-paper";
+import SearchBar from "@/components/search/SearchBar";
+import { ThemedView } from "@/components/ThemedView";
+import { MaterialTopTabs } from "@/components/TopBarComponent";
+import { useState } from "react";
+import { useColorScheme } from "react-native";
 import {
   SafeAreaProvider,
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-const { Navigator } = createMaterialTopTabNavigator();
-
-export const MaterialTopTabs = withLayoutContext<
-  MaterialTopTabNavigationOptions,
-  typeof Navigator,
-  TabNavigationState<ParamListBase>,
-  MaterialTopTabNavigationEventMap
->(Navigator);
-
 export default function MyTabs() {
   const { top } = useSafeAreaInsets();
+  const [searchValue, setSearchValue] = useState<string>("");
+  const theme = useColorScheme();
+  const onSearchChange = async (e: string) => {
+    setSearchValue(e);
+  };
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        style={{ flex: 1, paddingHorizontal: 12, backgroundColor: "#fff" }}
-      >
-        <Searchbar
-          value=""
-          placeholder="Search chats"
-          style={{
-            backgroundColor: "#171C2208",
-            borderColor: "#E9E9E9",
-            borderWidth: 1,
-            marginTop: top - 12,
-          }}
-        />
-        <MaterialTopTabs
-          screenOptions={{
-            tabBarActiveTintColor: "#000",
-            tabBarLabelStyle: {
-              fontSize: 14,
-              fontWeight: "bold",
-              textTransform: "capitalize",
-            },
-            tabBarIndicatorStyle: { backgroundColor: "#269355", height: 2 },
-          }}
-        >
-          <MaterialTopTabs.Screen
-            name="all"
-            options={{
-              title: "All",
-              sceneStyle: { backgroundColor: "#fff" },
-            }}
+    <ThemedView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, paddingHorizontal: 12 }}>
+          <SearchBar
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            top={top - 12}
           />
-          <MaterialTopTabs.Screen
-            name="unread"
-            options={{
-              title: "Unread",
-              sceneStyle: { backgroundColor: "#fff" },
+          <MaterialTopTabs
+            screenOptions={{
+              tabBarActiveTintColor: theme === "light" ? "#000" : "#fff",
+              tabBarInactiveTintColor: theme === "light" ? "#111" : "#a1a1a1",
+              tabBarStyle: { backgroundColor: "transparent" },
+              tabBarLabelStyle: {
+                fontSize: 14,
+                fontWeight: "bold",
+                textTransform: "capitalize",
+              },
+              sceneStyle: {
+                backgroundColor: "transparent",
+              },
+              tabBarIndicatorStyle: { backgroundColor: "#269355", height: 2 },
             }}
-          />
-          <MaterialTopTabs.Screen
-            name="requests"
-            options={{
-              title: "Chat Requests",
-              sceneStyle: { backgroundColor: "#fff" },
-            }}
-          />
-        </MaterialTopTabs>
-      </SafeAreaView>
-    </SafeAreaProvider>
+          >
+            <MaterialTopTabs.Screen
+              name="all"
+              options={{
+                title: "All",
+              }}
+            />
+            <MaterialTopTabs.Screen
+              name="requests"
+              options={{
+                title: "Chat Requests",
+                // sceneStyle: { backgroundColor: "#fff" },
+              }}
+            />
+          </MaterialTopTabs>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </ThemedView>
   );
 }

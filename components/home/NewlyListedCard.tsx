@@ -1,25 +1,34 @@
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { FC } from "react";
 import Car from "./Car";
 import { CarObjProps } from "@/types/carTypes";
+import OtherCar from "../global/OtherCar";
+import { ItemLoader } from "./itemLoader";
+import { ThemedText } from "../ThemedText";
 
 interface CarProps {
   data: CarObjProps[];
+  loading: boolean;
 }
-const NewlyListedCard: FC<CarProps> = ({ data }) => {
+const NewlyListedCard: FC<CarProps> = ({ data, loading }) => {
   return (
     <View>
-      <Text style={styles.title}>Newly Listed Cars</Text>
-      <View style={styles.mapContainer}>
-        {data.map((e, _) => (
-          <Car
-            key={_}
-            {...e}
-            downloadURL={e.user?.downloadURL}
-            fullName={e.user?.fullName}
-          />
-        ))}
-      </View>
+      <ThemedText style={styles.title}>Newly Listed Cars</ThemedText>
+      {loading ? (
+        <ItemLoader no={2} />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={({ item }) => {
+            return <OtherCar details={item} />;
+          }}
+          horizontal
+          keyExtractor={(item) => item._id as string}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
+        />
+      )}
     </View>
   );
 };
@@ -31,7 +40,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 500,
     marginTop: 12,
-    marginBottom: 16,
+    marginBottom: 12,
+    lineHeight: 20,
   },
   mapContainer: {
     gap: 12,

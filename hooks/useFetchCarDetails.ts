@@ -2,6 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { getAuth } from "firebase/auth";
 import { useCallback, useState } from "react";
 import axios from "axios";
+import { API_ROUTE } from "@/utils/apiRoute";
 
 type carDetailsProps = {
   car: {
@@ -23,6 +24,10 @@ type carDetailsProps = {
     rentalPricePerDay: number;
   };
   reviews: [];
+  averageRating: number;
+  totalReviews: number;
+  hasMoreReviews: boolean;
+  chatExist: boolean;
 };
 
 type carprop = {
@@ -43,6 +48,8 @@ type carprop = {
     rentalTerms: string;
     rentalPricePerDay: number;
   };
+  averageRating: number;
+  totalReviews: number;
 };
 
 const useCarDetails = (id: string) => {
@@ -66,8 +73,12 @@ const useCarDetails = (id: string) => {
       rentalPricePerDay: 0,
     },
     reviews: [],
+    averageRating: 0,
+    totalReviews: 0,
+    hasMoreReviews: false,
+    chatExist: true,
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getUserToken = async () => {
     const auth = getAuth();
@@ -85,14 +96,11 @@ const useCarDetails = (id: string) => {
       const token = await getUserToken();
       if (!token) return;
 
-      const response = await axios.get(
-        `http://172.20.10.3:4000/api/cars/car/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // ⬅️ send token in headers
-          },
-        }
-      );
+      const response = await axios.get(`${API_ROUTE}cars/car/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // ⬅️ send token in headers
+        },
+      });
 
       setCarsDetails(response.data);
     } catch (error) {

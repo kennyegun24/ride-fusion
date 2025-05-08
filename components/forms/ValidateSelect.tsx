@@ -4,11 +4,13 @@ import {
   TextInput as ReactNativeTextInput,
   View,
   TextInputProps,
+  ColorSchemeName,
 } from "react-native";
 import React, { FC } from "react";
 import { Controller } from "react-hook-form";
 import { AntDesign } from "@expo/vector-icons";
 import { Dropdown } from "react-native-element-dropdown";
+import { ThemedText } from "../ThemedText";
 
 type inputProps = {
   control: any;
@@ -16,6 +18,7 @@ type inputProps = {
   name: string;
   placeholder: string;
   data: any[];
+  theme: ColorSchemeName;
 } & TextInputProps;
 
 type dropdownValue = {
@@ -27,6 +30,7 @@ const ValidateSelect = ({
   placeholder,
   control,
   data,
+  theme,
   ...props
 }: inputProps) => {
   return (
@@ -38,20 +42,17 @@ const ValidateSelect = ({
         field: { onBlur, onChange, value },
         fieldState: { error },
       }) => {
-        const errorStyle = {
-          color: error ? "red" : "#4B524E",
-        };
         const errorField = {
           borderColor: error ? "red" : "#E9E9E9",
         };
-        console.log(error);
         return (
           <>
-            <Text
-              style={[styles.labelStyle, { color: error ? "red" : "#4B524E" }]}
+            <ThemedText
+              lightColor={error ? "red" : "#4B524E"}
+              darkColor={error ? "red" : "#fff"}
             >
               {label}
-            </Text>
+            </ThemedText>
             <Dropdown
               style={[
                 styles.dropdown,
@@ -60,7 +61,12 @@ const ValidateSelect = ({
                 },
               ]}
               placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
+              selectedTextStyle={[
+                styles.selectedTextStyle,
+                {
+                  color: theme === "light" ? "#000" : "#b6b6b6",
+                },
+              ]}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
               data={data}
@@ -107,7 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#171C2208",
   },
   scroll: { paddingVertical: 24 },
-  labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 16 },
   errorText: {
     fontSize: 12,
     color: "red",
@@ -128,7 +133,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color: "#4B524E",
+    // color: "#4B524E",
     opacity: 0.4,
   },
   selectedTextStyle: {

@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useColorScheme,
   View,
 } from "react-native";
 import React, { useState } from "react";
@@ -17,6 +18,7 @@ import { updateUserProfile } from "@/helper/updateProfile";
 import useAuth from "@/hooks/userAuth";
 import { updateProfile } from "firebase/auth";
 import { useRequest } from "@/providers/RequestProvider";
+import { ThemedView } from "@/components/ThemedView";
 
 const Page = () => {
   const [values, setValues] = useState({
@@ -50,30 +52,36 @@ const Page = () => {
       triggerLoader(false);
     }
   };
-
+  const theme = useColorScheme();
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
+    <ThemedView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Feather name="chevron-left" size={24} color="black" />
-        </Pressable>
-        <HeaderImage minHeight={10} />
-        <View style={styles.formContainer}>
-          <PersonalInfoForm values={values} setValues={setValues} />
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <Pressable onPress={() => router.back()} style={styles.backBtn}>
+            <Feather
+              name="chevron-left"
+              size={24}
+              color={theme === "light" ? "#000" : "#fff"}
+            />
+          </Pressable>
+          <HeaderImage minHeight={10} />
+          <View style={styles.formContainer}>
+            <PersonalInfoForm values={values} setValues={setValues} />
+          </View>
+        </ScrollView>
+        <View style={styles.pressableView}>
+          <Pressable onPress={saveUpdate} style={styles.btnPressable}>
+            <Text style={styles.btnText}>Update Profile</Text>
+          </Pressable>
         </View>
-      </ScrollView>
-      <View style={styles.pressableView}>
-        <Pressable onPress={saveUpdate} style={styles.btnPressable}>
-          <Text style={styles.btnText}>Update Profile</Text>
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </ThemedView>
   );
 };
 
@@ -81,7 +89,6 @@ export default Page;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     flex: 1,
   },
   backBtn: {

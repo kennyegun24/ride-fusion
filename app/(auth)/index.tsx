@@ -3,10 +3,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
+  useColorScheme,
   View,
 } from "react-native";
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Header } from "@/components/auth/Header";
@@ -17,12 +17,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { loginSchema } from "@/schema/authValidationSchema";
 import ValidateInput from "@/components/forms/ValidateInput";
-import { router } from "expo-router";
 import { useRegistrationState } from "@/hooks/useRegisterationState";
+import { ThemedView } from "@/components/ThemedView";
+import { FirebaseError } from "firebase/app";
+import { useToast } from "@/providers/ToastProvider";
+import { useRequest } from "@/providers/RequestProvider";
 type LoginFormSchema = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const [inProcess, setInProcess] = useState(false);
+  const { triggerLoader, sending } = useRequest();
+  const theme = useColorScheme();
+  const { showToast } = useToast();
   const login = async (e: any) => {
     try {
       const user = await signInWithEmailAndPassword(
@@ -35,47 +40,91 @@ const Login = () => {
         // router.push("/(protected)/(tabs)");
       }
     } catch (error) {
-      console.log(error);
+      if (error instanceof FirebaseError) {
+        const errorCode = error.code;
+        if (
+          errorCode === "auth/invalid-credential" ||
+          errorCode === "auth/invalid-email" ||
+          errorCode === "auth/wrong-password"
+        ) {
+          return showToast({
+            text1: "Invalid credentials",
+            text2: "Password or Email is wrong",
+            toastType: "error",
+          });
+        } else if (errorCode === "auth/too-many-requests") {
+          return showToast({
+            text1: "Too many attempts",
+            text2: "Try again later",
+            toastType: "error",
+          });
+        }
+      }
+      console.log(error, "err");
+      return showToast({
+        toastType: "error",
+        text1: "Something went wrong",
+      });
+    } finally {
+      triggerLoader(false);
     }
   };
   const { control, handleSubmit } = useForm<LoginFormSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "Kennyegun240@gmail.com",
-      password: "Elias-2001",
+      email: "",
+      password: "",
     },
   });
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {/* <StatusBar hidden={true} backgroundColor="red" /> */}
-      <View style={styles.container}>
-        <StatusBar style="auto" />
-        <Header
-          header="Welcome Back"
-          subHeader="Ready for your next ride? Sign in to continue"
-        />
+    <ThemedView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* <StatusBar hidden={true} backgroundColor="red" /> */}
+        <View style={styles.container}>
+          <StatusBar style="auto" />
+          <Header
+            header="Welcome Back"
+            subHeader="Ready for your next ride? Sign in to continue"
+          />
 
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-          <View style={{ gap: 12 }}>
-            {loginCredentials.map((e) => (
-              <View key={e.key}>
-                <ValidateInput
-                  placeholder={e.placeholder}
-                  control={control}
-                  label={e.label}
-                  name={e.key}
-                />
-              </View>
-            ))}
+          <ScrollView
+            style={styles.scroll}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={{ gap: 12 }}>
+              {loginCredentials.map((e) => (
+                <View key={e.key}>
+                  <ValidateInput
+                    placeholder={e.placeholder}
+                    control={control}
+                    label={e.label}
+                    name={e.key}
+                    theme={theme}
+                    keyboardType={
+                      e.key === "email" ? "email-address" : "default"
+                    }
+                    secureTextEntry={e.key === "password"}
+                  />
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+          <View style={styles.btnContainer}>
+            <Pressable
+              onPress={sending ? null : handleSubmit(login)}
+              style={[
+                styles.authButton,
+                {
+                  backgroundColor: sending ? "gray" : "#269355",
+                },
+              ]}
+            >
+              <Text style={styles.authText}>Login</Text>
+            </Pressable>
           </View>
-        </ScrollView>
-        <View style={styles.btnContainer}>
-          <Pressable onPress={handleSubmit(login)} style={styles.authButton}>
-            <Text style={styles.authText}>Login</Text>
-          </Pressable>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ThemedView>
   );
 };
 
@@ -99,7 +148,7 @@ const styles = StyleSheet.create({
   scroll: { paddingVertical: 24 },
   labelStyle: { color: "#4B524E", fontWeight: 600, fontSize: 18 },
   authButton: {
-    backgroundColor: "#269355",
+    // backgroundColor: "#269355",
     paddingHorizontal: 12,
     paddingVertical: 16,
     borderRadius: 50,
