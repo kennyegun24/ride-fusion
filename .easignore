@@ -40,6 +40,4 @@ app-example
 # .env
 config/
 /android
-.env
-google-services.json
 /ios

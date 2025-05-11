@@ -2,19 +2,26 @@ import { useState, useEffect, useRef } from "react";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import { Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
 // ✅ Set global notification handler once
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldShowAlert: true,
-  }),
+  handleNotification: async (notification) => {
+    // const count = await Notifications.getBadgeCountAsync();
+    // console.log(count);
+    // Notifications.setBadgeCountAsync(count + 1);
+    // const { content } = notification.request;
+    // console.log(content);
+    return {
+      shouldPlaySound: false,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldShowAlert: true,
+    };
+  },
 });
 
 export function usePushNotifications(userId: string | null) {
@@ -43,12 +50,21 @@ export function usePushNotifications(userId: string | null) {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
+        console.log(notification);
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("User interacted with notification:", response);
+        const notificationContent = response.notification.request.content;
+        console.log(
+          "User interacted with notification:",
+          response.notification.request.content
+        );
       });
+
+    Notifications.getBadgeCountAsync().then((count) => {
+      console.log(count);
+    });
 
     return () => {
       if (notificationListener.current) {
@@ -83,14 +99,17 @@ async function registerForPushNotificationsAsync(userId: string) {
   }
 
   if (Device.isDevice) {
+    console.log("device");
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== "granted") {
+      console.log("first");
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
+      console.log("sec");
       alert("Failed to get push token for push notification!");
       return;
     }
@@ -99,20 +118,26 @@ async function registerForPushNotificationsAsync(userId: string) {
       const projectId =
         Constants?.expoConfig?.extra?.eas?.projectId ??
         Constants?.easConfig?.projectId;
+      console.log("projectid");
+      console.log(projectId);
       if (!projectId) throw new Error("Project ID not found");
-
+      console.log("projectid seen");
+      console.log(projectId, Platform.OS);
       token = (
         await Notifications.getExpoPushTokenAsync({
           projectId,
         })
       ).data;
+      console.log("token found");
       const userStatusRef = doc(db, "users", userId);
       await updateDoc(userStatusRef, {
         pushToken: token,
       });
+      Alert.alert(token);
       console.log("Expo Push Token:", token);
     } catch (e) {
       token = `${e}`;
+      console.log(e);
     }
   } else {
     alert("Must use physical device for Push Notifications");

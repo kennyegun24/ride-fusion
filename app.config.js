@@ -26,6 +26,7 @@ export default {
       },
       permissions: ["android.permission.RECORD_AUDIO"],
       package: "com.jaamanu.ridefusion",
+      googleServicesFile: "./google-services.json",
     },
     web: {
       bundler: "metro",
